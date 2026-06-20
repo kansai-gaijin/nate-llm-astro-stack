@@ -1,0 +1,25 @@
+---
+interface Props {
+	as?: 'section' | 'div' | 'article';
+	spacing?: 'compact' | 'default' | 'spacious' | 'none';
+	class?: string;
+	id?: string;
+}
+
+const {
+	as: Tag = 'section',
+	spacing = 'default',
+	class: className = '',
+	id,
+}: Props = Astro.props;
+const spacings = {
+	compact: 'py-12 sm:py-16',
+	default: 'py-20 sm:py-28',
+	spacious: 'py-28 sm:py-40',
+	none: '',
+};
+---
+
+<Tag id={id} class:list={[spacings[spacing], className]}>
+	<slot />
+</Tag>

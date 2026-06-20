@@ -1,0 +1,69 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	href?: string;
+	type?: 'button' | 'submit' | 'reset';
+	intent?: 'primary' | 'secondary' | 'quiet';
+	size?: 'sm' | 'md' | 'lg';
+	icon?: string;
+	iconPosition?: 'start' | 'end';
+	class?: string;
+	disabled?: boolean;
+	target?: '_blank' | '_self';
+	rel?: string;
+	ariaLabel?: string;
+}
+
+const {
+	href,
+	type = 'button',
+	intent = 'primary',
+	size = 'md',
+	icon,
+	iconPosition = 'end',
+	class: className = '',
+	disabled = false,
+	target,
+	rel = target === '_blank' ? 'noreferrer' : undefined,
+	ariaLabel,
+} = Astro.props;
+const Tag = href ? 'a' : 'button';
+const intents = {
+	primary: 'bg-lime-300 text-neutral-950 hover:bg-lime-200 focus-visible:bg-lime-200',
+	secondary: 'border border-current bg-transparent hover:bg-white/10 focus-visible:bg-white/10',
+	quiet: 'bg-transparent hover:text-lime-300 focus-visible:text-lime-300',
+};
+const sizes = {
+	sm: 'min-h-10 px-4 text-sm',
+	md: 'min-h-12 px-5 text-base',
+	lg: 'min-h-14 px-7 text-lg',
+};
+---
+
+<Tag
+	href={href}
+	type={!href ? type : undefined}
+	target={href ? target : undefined}
+	rel={href ? rel : undefined}
+	disabled={!href ? disabled : undefined}
+	aria-disabled={href && disabled ? 'true' : undefined}
+	aria-label={ariaLabel}
+	class:list={[
+		'group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-[var(--motion-fast)] ease-fluid hover:-translate-y-0.5 active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none',
+		intents[intent],
+		sizes[size],
+		disabled && 'pointer-events-none opacity-50',
+		className,
+	]}
+>
+	{icon && iconPosition === 'start' && <Icon name={icon} class="size-[1.1em]" aria-hidden="true" />}
+	<span><slot /></span>
+	{icon && iconPosition === 'end' && (
+		<Icon
+			name={icon}
+			class="size-[1.1em] transition-transform duration-[var(--motion-fast)] ease-fluid group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+			aria-hidden="true"
+		/>
+	)}
+</Tag>

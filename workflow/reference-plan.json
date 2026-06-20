@@ -1,0 +1,36 @@
+{
+  "colorScheme": "light",
+  "navigationTimeoutMs": 45000,
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 1000 },
+    { "name": "tablet", "width": 768, "height": 1024 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "path": "/",
+      "states": [
+        { "name": "initial", "actions": [], "delayMs": 300, "fullPage": false },
+        {
+          "name": "alpine-open",
+          "implementationOnly": true,
+          "actions": [
+            {
+              "type": "click",
+              "implementationSelector": "button:has-text('Confirm Alpine.js is active')"
+            }
+          ],
+          "expect": {
+            "implementationSelector": "text=Alpine, Tailwind, TypeScript, Iconify",
+            "motionSelectors": [
+              "button:has-text('Confirm Alpine.js is active') svg",
+              "text=Alpine, Tailwind, TypeScript, Iconify"
+            ]
+          },
+          "fullPage": false
+        }
+      ]
+    }
+  ]
+}

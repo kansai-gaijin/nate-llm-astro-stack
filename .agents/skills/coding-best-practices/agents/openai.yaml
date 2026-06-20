@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coding Best Practices"
+  short_description: "Ship reusable accessible production code"
+  default_prompt: "Use $coding-best-practices to implement and verify this change as reusable production-quality code."

@@ -1,0 +1,31 @@
+{
+  "hardGates": [
+    "Every route in content/overview.md is implemented",
+    "Approved page text is preserved without invented factual claims",
+    "Astro check and production build pass",
+    "No uncaught browser or console errors",
+    "No serious or critical accessibility violations",
+    "No horizontal overflow at configured viewports",
+    "Required hover, focus, loading, scrolling, and navigation states work",
+    "Every visible transition and animation is fluid, interruption-safe, and has reduced-motion behavior",
+    "All media has provenance or is recorded as image-generated"
+  ],
+  "reviewDimensions": {
+    "layoutAndGeometry": 20,
+    "colorAndSurface": 10,
+    "typography": 10,
+    "responsiveBehavior": 15,
+    "motionAndInteraction": 20,
+    "contentArchitecture": 10,
+    "creativeDirectionAndCraft": 15
+  },
+  "designProgression": {
+    "fidelityBaselineRequired": true,
+    "creativeElevationAfterBaseline": true,
+    "effectsMustSupportNarrative": true
+  },
+  "iterationPolicy": {
+    "iterationsBeforeFeedback": 3,
+    "stopOnlyOnExplicitUserApproval": true
+  }
+}

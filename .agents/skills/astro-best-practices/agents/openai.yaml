@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Best Practices"
+  short_description: "Build fast maintainable Astro websites"
+  default_prompt: "Use $astro-best-practices to implement this Astro feature with server-first architecture and strict TypeScript."

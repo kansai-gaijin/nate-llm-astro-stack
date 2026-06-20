@@ -1,0 +1,54 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import Container from '../components/ui/Container.astro';
+---
+
+<BaseLayout title="Astro Design Loop Starter" description="Add content and invoke the design loop.">
+	<main id="main-content" class="grid min-h-screen place-items-center bg-neutral-950 px-6 py-20 text-white">
+		<Container as="section" size="narrow">
+			<div class="mb-8 flex size-14 items-center justify-center rounded-2xl bg-lime-300 text-neutral-950">
+				<Icon name="mdi:creation-outline" class="size-7" aria-hidden="true" />
+			</div>
+			<p class="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-lime-300">Ready for content</p>
+			<h1 class="text-balance text-5xl font-semibold leading-tight sm:text-7xl">Astro Design Loop</h1>
+			<p class="mt-6 max-w-2xl text-lg leading-8 text-neutral-300">
+				Replace the files under <code class="text-lime-300">content/</code>, then invoke the
+				project’s design-loop skill with subagents. This placeholder page will be replaced by the
+				generated site.
+			</p>
+			<Button href="#starter-check" icon="mdi:arrow-down" class="mt-8">Check the starter</Button>
+			<div id="starter-check" class="mt-10 rounded-2xl border border-white/15 bg-white/5 p-6" x-data="{ open: false }">
+				<button
+					type="button"
+					class="flex w-full items-center justify-between gap-4 text-left font-medium transition-colors duration-[var(--motion-fast)] ease-fluid hover:text-lime-300 focus-visible:text-lime-300"
+					@click="open = !open"
+					:aria-expanded="open"
+				>
+					<span>Confirm Alpine.js is active</span>
+					<Icon name="mdi:chevron-down" class="size-6 transition-transform duration-[var(--motion-base)] ease-fluid motion-reduce:transition-none" x-bind:class="open && 'rotate-180'" />
+				</button>
+				<p
+					x-show="open"
+					x-cloak
+					x-transition:enter="transition ease-fluid duration-[var(--motion-base)] motion-reduce:transition-none"
+					x-transition:enter-start="opacity-0 -translate-y-2"
+					x-transition:enter-end="opacity-100 translate-y-0"
+					x-transition:leave="transition ease-fluid duration-[var(--motion-fast)] motion-reduce:transition-none"
+					x-transition:leave-start="opacity-100 translate-y-0"
+					x-transition:leave-end="opacity-0 -translate-y-1"
+					class="mt-4 text-neutral-300"
+				>
+					Alpine, Tailwind, TypeScript, Iconify, microCMS helpers, SEO, and GTM are configured.
+				</p>
+			</div>
+		</Container>
+	</main>
+</BaseLayout>
+
+<style>
+	[x-cloak] {
+		display: none !important;
+	}
+</style>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Design Direction"
+  short_description: "Create award-worthy fluid web experiences"
+  default_prompt: "Use $web-design-direction to elevate this reference-driven design into a polished, fluid web experience."

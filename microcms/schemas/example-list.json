@@ -1,0 +1,17 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "title",
+      "name": "Title",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "body",
+      "name": "Body",
+      "kind": "richEditorV2",
+      "required": false
+    }
+  ],
+  "customFields": []
+}

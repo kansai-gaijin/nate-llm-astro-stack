@@ -1,0 +1,38 @@
+---
+import Head from '../components/Head.astro';
+import GoogleTagManager from '../components/analytics/GoogleTagManager.astro';
+import GoogleTagManagerNoScript from '../components/analytics/GoogleTagManagerNoScript.astro';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonicalPath?: string;
+	image?: string;
+	noindex?: boolean;
+	lang?: string;
+	bodyClass?: string;
+}
+
+const { lang = siteConfig.locale, bodyClass = '', ...headProps } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<Head {...headProps} />
+		<GoogleTagManager />
+		<slot name="head" />
+	</head>
+	<body class={bodyClass} style={`font-family:${siteConfig.fonts.family}`}>
+		<GoogleTagManagerNoScript />
+		<a
+			href="#main-content"
+			class="sr-only fixed left-4 top-4 z-[9999] rounded bg-white px-4 py-2 text-black focus:not-sr-only"
+		>
+			Skip to content
+		</a>
+		<slot />
+	</body>
+</html>

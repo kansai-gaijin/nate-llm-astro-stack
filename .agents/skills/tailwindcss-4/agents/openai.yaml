@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tailwind CSS 4"
+  short_description: "Build maintainable Tailwind CSS 4 interfaces"
+  default_prompt: "Use $tailwindcss-4 to implement this interface with Tailwind CSS 4 best practices."

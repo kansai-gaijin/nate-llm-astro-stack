@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans: "Noto Sans JP", sans-serif;
+	--ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+	--motion-fast: 220ms;
+	--motion-base: 380ms;
+	--motion-slow: 680ms;
+	--ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+	font-family: var(--font-sans);
+	color: #171717;
+	background: #fff;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	min-width: 320px;
+}
+
+img,
+svg,
+video {
+	display: block;
+	max-width: 100%;
+}
+
+:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: var(--motion-base);
+	animation-timing-function: var(--ease-fluid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		transition-delay: 0ms !important;
+	}
+}

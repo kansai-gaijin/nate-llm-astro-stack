@@ -1,0 +1,51 @@
+---
+import { siteConfig } from '../config/site';
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonicalPath?: string;
+	image?: string;
+	noindex?: boolean;
+}
+
+const {
+	title = siteConfig.name,
+	description = siteConfig.description,
+	canonicalPath = Astro.url.pathname,
+	image,
+	noindex = false,
+} = Astro.props;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString();
+const canonical = siteUrl ? new URL(canonicalPath, siteUrl).toString() : undefined;
+const socialImage = image && siteUrl ? new URL(image, siteUrl).toString() : image;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<meta name="description" content={description} />
+<meta name="theme-color" content={siteConfig.themeColor} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+{import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+	<meta name="google-site-verification" content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION} />
+)}
+{canonical && <link rel="canonical" href={canonical} />}
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href={siteConfig.fonts.stylesheetUrl} />
+<title>{title}</title>
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{canonical && <meta property="og:url" content={canonical} />}
+{socialImage && <meta property="og:image" content={socialImage} />}
+<meta property="og:locale" content={siteConfig.locale.replace('-', '_')} />
+<meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{socialImage && <meta name="twitter:image" content={socialImage} />}

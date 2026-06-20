@@ -1,0 +1,4 @@
+interface:
+  display_name: "Alpine.js Best Practices"
+  short_description: "Build accessible Alpine.js interactions"
+  default_prompt: "Use $alpinejs-best-practices to implement this interaction with accessible, fluid Alpine.js behavior."

@@ -1,0 +1,10 @@
+{
+  "endpoints": [
+    {
+      "name": "Example list",
+      "endpoint": "example-list",
+      "type": "list",
+      "schema": "example-list.json"
+    }
+  ]
+}
