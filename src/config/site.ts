@@ -1,7 +1,9 @@
 export const siteConfig = {
 	name: 'Astro Design Loop Starter',
 	description: 'A reference-driven Astro website starter.',
-	locale: 'en',
+	// Sites built from this template are primarily Japanese. `locale` sets <html lang>
+	// and og:locale; change it only when a specific site is not Japanese.
+	locale: 'ja',
 	themeColor: '#ffffff',
 	fonts: {
 		stylesheetUrl:

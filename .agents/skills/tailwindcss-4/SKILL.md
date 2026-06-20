@@ -38,8 +38,34 @@ one.
 - Pair hover with focus-visible. Provide reduced-motion behavior that preserves state clarity.
 - Check intermediate frames, not only start/end screenshots.
 
+## Break Japanese text sensibly
+
+These sites are primarily Japanese, which has no spaces, so default browser wrapping splits kanji
+compounds at arbitrary, ugly points. The baseline lives in `src/styles/global.css` — keep it:
+
+- `body { line-break: strict; word-break: auto-phrase; }` — kinsoku plus phrase-aware (文節) breaking
+  where supported (Chromium); it safely falls back to `normal` elsewhere.
+- `h1–h4 { text-wrap: pretty; }` — avoids orphans and single-character last lines.
+
+For headings, navigation, buttons, and short copy that must read perfectly in every browser
+(`auto-phrase` is Chromium-only), guarantee phrase breaks with BudouX-inserted `<wbr>` plus
+`break-keep` (Tailwind) or the `.jp-phrase` utility, so breaks occur only at inserted opportunities:
+
+```astro
+---
+import { loadDefaultJapaneseParser } from 'budoux';
+const parser = loadDefaultJapaneseParser();
+const html = parser.translateHTMLString(headingText); // inserts <wbr> at phrase boundaries
+---
+<h2 class="break-keep" set:html={html} />
+```
+
+- Never use `break-all` for Japanese body text. Use `break-keep` only with explicit break points.
+- Keep Japanese-capable fonts (default Noto Sans JP); tune `leading-*` and `tracking-*` for CJK.
+
 ## Verify
 
 Inspect desktop and mobile rendering, keyboard focus, overflow, contrast, dynamic state classes, and
-reduced motion. Refer to current [Tailwind CSS documentation](https://tailwindcss.com/docs) when a
-v4 directive or utility is uncertain.
+reduced motion. For Japanese, confirm line breaks fall at phrase boundaries with no split compounds,
+orphaned characters, or kinsoku violations. Refer to current
+[Tailwind CSS documentation](https://tailwindcss.com/docs) when a v4 directive or utility is uncertain.

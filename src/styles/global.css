@@ -26,6 +26,30 @@ html {
 body {
 	margin: 0;
 	min-width: 320px;
+	/* Japanese typography defaults. Japanese has no spaces, so browsers otherwise break
+	   lines between almost any two characters, splitting kanji compounds at hard-to-read,
+	   ugly points. `line-break: strict` enforces kinsoku (forbidden line-start/end
+	   characters); `word-break: auto-phrase` breaks at natural phrase (文節) boundaries
+	   where supported (Chromium) and falls back to normal elsewhere. */
+	line-break: strict;
+	word-break: auto-phrase;
+}
+
+/* Display text is the most sensitive to awkward breaks. `text-wrap: pretty` avoids
+   orphans/short last lines; pair with `break-keep` + BudouX <wbr> for guaranteed phrase
+   breaks in browsers without auto-phrase (Safari/Firefox). */
+h1,
+h2,
+h3,
+h4 {
+	text-wrap: pretty;
+}
+
+/* Utility: only break where a <wbr>/zero-width space is explicitly inserted (e.g. by
+   BudouX). Use on headings and short, must-not-break-ugly copy across all browsers. */
+.jp-phrase {
+	word-break: keep-all;
+	overflow-wrap: break-word;
 }
 
 img,

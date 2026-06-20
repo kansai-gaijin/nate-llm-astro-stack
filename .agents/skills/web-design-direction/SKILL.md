@@ -41,6 +41,22 @@ Anything that moves must move fluidly. Abrupt or ugly transitions are defects.
   ratio, pause offscreen, provide static/mobile/reduced-motion fallbacks, and destroy resources.
 - Reject an effect when it harms clarity, input response, accessibility, or performance.
 
+## Direct Japanese typography
+
+These sites are primarily Japanese. Japanese text quality is an art-direction concern, not an
+afterthought, because browsers break spaceless Japanese between arbitrary characters and split kanji
+compounds at ugly points.
+
+- Design for phrase-level (文節) line breaks. Headings, hero copy, navigation, buttons, and pull
+  quotes must break at meaningful boundaries, never mid-compound or with a single trailing character.
+- Treat the global baseline (`line-break: strict`, `word-break: auto-phrase`, `text-wrap: pretty`) as
+  the floor. For display text that must read perfectly in every browser, specify BudouX `<wbr>` with
+  `break-keep` so breaks land only where intended.
+- Choose Japanese-capable fonts (default Noto Sans JP) and tune line-height and letter-spacing for
+  CJK density; Latin-tuned spacing makes Japanese cramped or loose.
+- Mix Japanese and Latin deliberately. Set Latin numerals, units, and loanwords without forcing
+  awkward wraps, and keep alignment calm — avoid justified Japanese unless kinsoku is fully handled.
+
 ## Audit for creative quality
 
 Score concept coherence, typography, composition, responsive art direction, media quality, motion

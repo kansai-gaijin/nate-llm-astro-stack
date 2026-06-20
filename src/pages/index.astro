@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
 import Container from '../components/ui/Container.astro';
+import JpText from '../components/ui/JpText.astro';
 ---
 
 <BaseLayout title="Astro Design Loop Starter" description="Add content and invoke the design loop.">
@@ -18,6 +19,11 @@ import Container from '../components/ui/Container.astro';
 				project’s design-loop skill with subagents. This placeholder page will be replaced by the
 				generated site.
 			</p>
+			<JpText
+				as="p"
+				text="東京を拠点に、ブランドの世界観を伝える美しいウェブ体験を制作しています。"
+				class="mt-6 max-w-md text-lg leading-8 text-neutral-400"
+			/>
 			<Button href="#starter-check" icon="mdi:arrow-down" class="mt-8">Check the starter</Button>
 			<div id="starter-check" class="mt-10 rounded-2xl border border-white/15 bg-white/5 p-6" x-data="{ open: false }">
 				<button

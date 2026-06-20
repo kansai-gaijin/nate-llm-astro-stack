@@ -1,7 +1,7 @@
 ---
 siteName: Example Site
 referenceUrl: https://example.com
-locale: en
+locale: ja
 pages:
   - path: /
     file: home.md

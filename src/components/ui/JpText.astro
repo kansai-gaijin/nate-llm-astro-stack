@@ -1,0 +1,27 @@
+---
+import { toPhrases } from '../../lib/japanese';
+
+interface Props {
+	/** Plain Japanese text to wrap at phrase (文節) boundaries. */
+	text: string;
+	/** Element to render. Defaults to an inline span; use 'h1'–'h3' for headings. */
+	as?: string;
+	/** Extra classes for layout/placement. */
+	class?: string;
+}
+
+const { text, as = 'span', class: className } = Astro.props as Props;
+const Tag = as;
+const phrases = toPhrases(text);
+---
+
+{/*
+	`.jp-phrase` applies `word-break: keep-all`, so the only break opportunities are the
+	`<wbr>` elements inserted between BudouX phrases. Phrase text is rendered as children,
+	so Astro escapes it automatically — no `set:html`, no DOM dependency at render time.
+*/}
+<Tag class:list={['jp-phrase', className]}>{
+	phrases.map((phrase, index) => (
+		<Fragment>{index > 0 && <wbr />}{phrase}</Fragment>
+	))
+}</Tag>

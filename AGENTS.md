@@ -44,6 +44,24 @@ for spectacle.
   licensed video exists, document the searched sources and use an approved static/generated fallback.
 - Use icons available through Iconify and record their collection/name in component code.
 
+## Japanese typography invariants
+
+Sites built from this template are primarily Japanese. Treat `ja` as the default `locale` in
+`content/overview.md` and `src/config/site.ts`, and only deviate when a specific site is not Japanese.
+
+- Japanese has no spaces, so browsers break lines between arbitrary characters and split kanji
+  compounds at ugly, hard-to-read points. Breaking Japanese at sensible phrase boundaries is a
+  hard requirement; awkward mid-word breaks are defects, exactly like abrupt motion.
+- The baseline is already in `src/styles/global.css`: `line-break: strict` (kinsoku) and
+  `word-break: auto-phrase` on `body`, plus `text-wrap: pretty` on headings. Keep these.
+- `word-break: auto-phrase` only works in Chromium today. For headings, hero copy, navigation, and
+  any short text that must never break ugly, guarantee phrase breaks across all browsers with
+  BudouX-inserted `<wbr>` (or zero-width spaces) combined with the `.jp-phrase` / Tailwind
+  `break-keep` class so breaks happen only at inserted opportunities.
+- Use a Japanese-capable Google Font (default: Noto Sans JP). Do not substitute a Latin-only font.
+- Auditors must check rendered Japanese line breaks at every breakpoint and flag split compounds,
+  single-character last lines, and kinsoku violations as discrepancies.
+
 ## Agent protocol
 
 - The main agent is the orchestrator and final decision-maker.
