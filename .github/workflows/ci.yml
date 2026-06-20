@@ -5,8 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+# contents: write lets the job commit a regenerated lockfile back to the branch.
+# On pull requests from forks GITHUB_TOKEN stays read-only, so the commit step is
+# guarded to push events only.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -17,6 +20,29 @@ jobs:
         with:
           node-version: 22.12.0
           cache: npm
-      - run: npm ci
+
+      # Strict, reproducible install on the happy path. If the committed lockfile is
+      # out of sync (e.g. regenerated on Windows, which drops Tailwind's bundled
+      # @tailwindcss/oxide-wasm32-wasi emnapi nodes), npm ci fails — so fall back to a
+      # full Linux `npm install`, which reifies the correct cross-platform lockfile.
+      - name: Install dependencies (self-heal lockfile if needed)
+        run: |
+          if npm ci; then
+            echo "Lockfile is in sync."
+          else
+            echo "::warning::npm ci failed; regenerating package-lock.json on Linux."
+            npm install --no-audit --no-fund
+            echo "lockfile_fixed=1" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit regenerated lockfile
+        if: env.lockfile_fixed == '1' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: sync package-lock.json on Linux"
+          git push || echo "::warning::Could not push lockfile fix (branch protection or permissions). Tests still ran against the corrected lockfile."
+
       - run: npx playwright install --with-deps chromium
       - run: npm test

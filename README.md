@@ -102,6 +102,16 @@ npm pack --dry-run
 
 See `deployment/cloudflare-pages.md` when the generated project targets Cloudflare Pages.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs the full verification suite on Linux. Its install step is
+self-healing: it uses strict `npm ci`, and only if that fails — for example when `package-lock.json`
+was regenerated on Windows, which drops Tailwind's bundled `@tailwindcss/oxide-wasm32-wasi` (emnapi)
+nodes — it falls back to a Linux `npm install` and commits the corrected lockfile back to the branch.
+This means you can change dependencies on any OS and let CI produce the canonical cross-platform
+lockfile; no local Docker or WSL is required. The workflow needs `contents: write`; on protected
+branches the fix is applied for the test run but not pushed. Generated projects inherit this CI.
+
 ## microCMS limitation
 
 The current documented microCMS Management API can list APIs and retrieve schemas, but does not
