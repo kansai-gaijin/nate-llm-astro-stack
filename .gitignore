@@ -1,5 +1,7 @@
 # build output
 dist/
+# npm pack artifacts
+*.tgz
 # generated types
 .astro/
 

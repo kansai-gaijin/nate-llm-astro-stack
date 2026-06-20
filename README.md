@@ -1,4 +1,4 @@
-# Create Astro Design Loop
+# nate-llm-astro-stack
 
 An interactive, publishable Astro starter that turns approved Markdown content and a reference URL
 into a complete website through a designer → builder → independent-auditor loop. It establishes
@@ -7,10 +7,16 @@ Code are both configured.
 
 ## Create a project
 
-After this package is published:
+Run it straight from GitHub (no npm publish required):
 
 ```text
-npx create-astro-design-loop@latest my-site
+npx github:kansai-gaijin/nate-llm-astro-stack my-site
+```
+
+Or, after this package is published to npm:
+
+```text
+npx nate-llm-astro-stack@latest my-site
 ```
 
 The CLI asks for:
@@ -21,7 +27,7 @@ The CLI asks for:
 - dependency installation and fresh Git initialization.
 
 For local package development, run `npm run create:test` or use
-`node bin/create-astro-design-loop.mjs ../my-site`.
+`node bin/nate-llm-astro-stack.mjs ../my-site`.
 
 ## Provide content
 
@@ -108,5 +114,5 @@ do not use microCMS continue entirely from Markdown.
 
 Push this source package to a GitHub repository, set an `NPM_TOKEN` repository secret, and publish a
 GitHub Release. `.github/workflows/publish-package.yml` validates the tarball and publishes it with
-npm provenance. Set the final npm package name and repository metadata before the first release if
-`create-astro-design-loop` is unavailable.
+npm provenance. Confirm the npm package name `nate-llm-astro-stack` is available before the first
+release.

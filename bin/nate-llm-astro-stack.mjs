@@ -21,7 +21,7 @@ function hasFlag(name) {
 }
 
 function help() {
-	console.log(`create-astro-design-loop [directory] [options]
+	console.log(`nate-llm-astro-stack [directory] [options]
 
 Options:
   --hosting <cloudflare-pages|static>

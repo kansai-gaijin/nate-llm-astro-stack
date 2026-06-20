@@ -1,11 +1,11 @@
 {
-  "name": "create-astro-design-loop",
+  "name": "nate-llm-astro-stack",
   "type": "module",
   "version": "0.1.0",
   "description": "Interactive Astro design-loop starter for Codex and Claude Code.",
   "license": "MIT",
   "bin": {
-    "create-astro-design-loop": "./bin/create-astro-design-loop.mjs"
+    "nate-llm-astro-stack": "./bin/nate-llm-astro-stack.mjs"
   },
   "files": [
     ".agents",

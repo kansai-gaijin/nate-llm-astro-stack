@@ -10,7 +10,7 @@ function create(name, options) {
 	const target = path.join(temporaryRoot, name);
 	const result = spawnSync(
 		process.execPath,
-		[path.join(root, 'bin', 'create-astro-design-loop.mjs'), target, '--yes', '--no-install', '--no-git', ...options],
+		[path.join(root, 'bin', 'nate-llm-astro-stack.mjs'), target, '--yes', '--no-install', '--no-git', ...options],
 		{ cwd: root, encoding: 'utf8' },
 	);
 	if (result.status !== 0) throw new Error(`${result.stdout}\n${result.stderr}`);
