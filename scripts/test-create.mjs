@@ -36,6 +36,14 @@ try {
 	const config = JSON.parse(fs.readFileSync(path.join(cloudflareProject, 'scaffold.config.json'), 'utf8'));
 	if (config.content !== 'microcms-fallback') throw new Error('Scaffold choices were not persisted.');
 
+	// Guard the generator's dependency-install spawn path without a full install. The generator
+	// launches `npm install` with shell: true so Windows can run npm.cmd (Node 22.12+/24 reject
+	// spawning .cmd/.bat directly, CVE-2024-27980). Spawning `npm --version` the same way proves
+	// npm is launchable on this platform, catching that EINVAL regression class in seconds.
+	const npmProbe = spawnSync('npm --version', { stdio: 'ignore', shell: true });
+	if (npmProbe.error) throw npmProbe.error;
+	if (npmProbe.status !== 0) throw new Error('npm is not launchable via the generator spawn path.');
+
 	console.log('Generator variants are valid.');
 } finally {
 	fs.rmSync(temporaryRoot, { recursive: true, force: true });

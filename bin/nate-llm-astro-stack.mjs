@@ -173,14 +173,19 @@ async function main() {
 	);
 
 	if (install) {
-		const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-		const result = spawnSync(npmCommand, ['install'], { cwd: target, stdio: 'inherit' });
+		// shell: true is required on Windows so Node can launch npm.cmd; without it,
+		// Node 22.12+/24 reject spawning .cmd/.bat directly (CVE-2024-27980) with EINVAL.
+		// The command is passed as a single literal string (no args array) to avoid the
+		// DEP0190 warning; all arguments here are constant, so there is no injection risk.
+		const result = spawnSync('npm install', { cwd: target, stdio: 'inherit', shell: true });
+		if (result.error) throw result.error;
 		if (result.status !== 0) throw new Error('npm install failed.');
 	}
 	if (initializeGit) {
-		const init = spawnSync('git', ['init'], { cwd: target, stdio: 'inherit' });
+		const init = spawnSync('git init', { cwd: target, stdio: 'inherit', shell: true });
+		if (init.error) throw init.error;
 		if (init.status !== 0) throw new Error('git init failed.');
-		spawnSync('git', ['branch', '-M', 'main'], { cwd: target, stdio: 'inherit' });
+		spawnSync('git branch -M main', { cwd: target, stdio: 'inherit', shell: true });
 	}
 
 	console.log(`\nCreated ${generatedPackage.name} in ${target}`);
