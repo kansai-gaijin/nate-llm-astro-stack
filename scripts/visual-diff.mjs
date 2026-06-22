@@ -6,6 +6,46 @@ import { PNG } from 'pngjs';
 const referenceRoot = path.resolve(process.env.REFERENCE_CAPTURE_DIR ?? 'artifacts/reference');
 const implementationRoot = path.resolve(process.env.IMPLEMENTATION_CAPTURE_DIR ?? 'artifacts/implementation');
 const diffRoot = path.resolve(process.env.DIFF_CAPTURE_DIR ?? 'artifacts/diff');
+const acceptance = JSON.parse(fs.readFileSync(path.resolve('workflow/acceptance.json'), 'utf8'));
+const referenceMetadataPath = path.join(referenceRoot, 'metadata.json');
+const implementationMetadataPath = path.join(implementationRoot, 'metadata.json');
+const referenceMetadata = fs.existsSync(referenceMetadataPath) ? JSON.parse(fs.readFileSync(referenceMetadataPath, 'utf8')) : [];
+const implementationMetadata = fs.existsSync(implementationMetadataPath) ? JSON.parse(fs.readFileSync(implementationMetadataPath, 'utf8')) : [];
+
+function metadataKey(entry) {
+	return `${entry.viewport}/${entry.page}/${entry.state}`;
+}
+
+const referenceMetadataByKey = new Map(referenceMetadata.map((entry) => [metadataKey(entry), entry]));
+const implementationMetadataByKey = new Map(implementationMetadata.map((entry) => [metadataKey(entry), entry]));
+
+function geometryComparison(relativePath, viewportWidth) {
+	const [viewport, page, file] = relativePath.split(/[\\/]/);
+	const state = file.replace(/\.png$/i, '');
+	const key = `${viewport}/${page}/${state}`;
+	const expected = referenceMetadataByKey.get(key)?.measurements ?? {};
+	const actual = implementationMetadataByKey.get(key)?.measurements ?? {};
+	const tolerance = Math.max(
+		acceptance.fidelityThresholds?.majorGeometryTolerancePx ?? 8,
+		viewportWidth * (acceptance.fidelityThresholds?.majorGeometryToleranceRatio ?? 0.01),
+	);
+	const measurements = Object.entries(expected).map(([id, box]) => {
+		if (!actual[id]) return { id, status: 'missing-implementation' };
+		const deltas = Object.fromEntries(
+			['x', 'y', 'width', 'height'].map((property) => [property, Number((actual[id][property] - box[property]).toFixed(3))]),
+		);
+		return {
+			id,
+			status: Object.values(deltas).every((delta) => Math.abs(delta) <= tolerance) ? 'passed' : 'failed',
+			deltas,
+			tolerance,
+		};
+	});
+	return {
+		passed: measurements.every((measurement) => measurement.status === 'passed'),
+		measurements,
+	};
+}
 
 function pngFiles(directory, base = directory) {
 	if (!fs.existsSync(directory)) return [];
@@ -55,6 +95,7 @@ for (const relativePath of files) {
 		{ threshold: 0.1, includeAA: false },
 	);
 	const totalPixels = reference.width * reference.height;
+	const geometry = geometryComparison(relativePath, reference.width);
 	const outputPath = path.join(diffRoot, relativePath);
 	fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 	fs.writeFileSync(outputPath, PNG.sync.write(diff));
@@ -65,6 +106,8 @@ for (const relativePath of files) {
 		totalPixels,
 		differenceRatio: Number((differentPixels / totalPixels).toFixed(6)),
 		similarity: Number((1 - differentPixels / totalPixels).toFixed(6)),
+		geometryPassed: geometry.passed,
+		geometry: geometry.measurements,
 	});
 }
 
@@ -75,3 +118,12 @@ const meanSimilarity = compared.length
 	: 0;
 console.log(`Compared ${compared.length}/${files.length} capture(s). Mean pixel similarity: ${(meanSimilarity * 100).toFixed(2)}%.`);
 console.log('Treat pixel similarity as diagnostic evidence; content and approved font substitutions require auditor judgment.');
+const incomplete = report.filter((entry) => entry.status !== 'compared');
+if (incomplete.length > 0) {
+	for (const entry of incomplete) console.error(`error: ${entry.status}: ${entry.file}`);
+}
+const geometryFailures = report.filter((entry) => entry.status === 'compared' && entry.geometryPassed === false);
+if (geometryFailures.length > 0) {
+	for (const entry of geometryFailures) console.error(`error: geometry mismatch: ${entry.file}`);
+}
+if (incomplete.length > 0 || geometryFailures.length > 0) process.exit(1);

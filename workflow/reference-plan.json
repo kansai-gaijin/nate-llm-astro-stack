@@ -1,33 +1,25 @@
 {
+  "status": "template",
   "colorScheme": "light",
   "navigationTimeoutMs": 45000,
   "viewports": [
-    { "name": "desktop", "width": 1440, "height": 1000 },
+    { "name": "desktop-1920", "width": 1920, "height": 1080 },
+    { "name": "desktop-1440", "width": 1440, "height": 1000 },
     { "name": "tablet", "width": 768, "height": 1024 },
-    { "name": "mobile", "width": 390, "height": 844 }
+    { "name": "mobile-390", "width": 390, "height": 844 },
+    { "name": "mobile-360", "width": 360, "height": 800 }
   ],
   "pages": [
     {
       "id": "home",
       "path": "/",
       "states": [
-        { "name": "initial", "actions": [], "delayMs": 300, "fullPage": false },
         {
-          "name": "alpine-open",
-          "implementationOnly": true,
-          "actions": [
-            {
-              "type": "click",
-              "implementationSelector": "button:has-text('Confirm Alpine.js is active')"
-            }
-          ],
-          "expect": {
-            "implementationSelector": "text=Alpine, Tailwind, TypeScript, Iconify",
-            "motionSelectors": [
-              "button:has-text('Confirm Alpine.js is active') svg",
-              "text=Alpine, Tailwind, TypeScript, Iconify"
-            ]
-          },
+          "name": "template-initial",
+          "kind": "template",
+          "viewports": ["desktop-1920", "desktop-1440", "tablet", "mobile-390", "mobile-360"],
+          "actions": [],
+          "delayMs": 300,
           "fullPage": false
         }
       ]

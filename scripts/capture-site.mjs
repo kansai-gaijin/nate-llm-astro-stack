@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn, spawnSync } from 'node:child_process';
 import { chromium } from '@playwright/test';
 import matter from 'gray-matter';
 
@@ -20,7 +19,6 @@ const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
 const overview = matter(fs.readFileSync(path.join(root, 'content', 'overview.md'), 'utf8')).data;
 const implementationBaseUrl = args.get('--base-url') ?? process.env.CAPTURE_BASE_URL ?? 'http://127.0.0.1:4321';
 const outputRoot = path.resolve(args.get('--output') ?? path.join('artifacts', target));
-let previewProcess;
 
 async function isReachable(url) {
 	try {
@@ -31,23 +29,9 @@ async function isReachable(url) {
 	}
 }
 
-async function ensureImplementationServer() {
+async function requireImplementationServer() {
 	if (target !== 'implementation' || (await isReachable(implementationBaseUrl))) return;
-
-	const astroCli = path.join(root, 'node_modules', 'astro', 'bin', 'astro.mjs');
-	const result = spawnSync(process.execPath, [astroCli, 'build'], { cwd: root, stdio: 'inherit' });
-	if (result.status !== 0) throw new Error('Astro build failed before capture.');
-
-	previewProcess = spawn(process.execPath, [astroCli, 'preview', '--host', '127.0.0.1'], {
-		cwd: root,
-		stdio: 'ignore',
-	});
-
-	for (let attempt = 0; attempt < 40; attempt += 1) {
-		if (await isReachable(implementationBaseUrl)) return;
-		await new Promise((resolve) => setTimeout(resolve, 250));
-	}
-	throw new Error(`Could not start the Astro preview server at ${implementationBaseUrl}.`);
+	throw new Error(`No orchestrator-managed server at ${implementationBaseUrl}. Run npm run loop:serve:start once for the batch.`);
 }
 
 function pageUrl(pagePlan) {
@@ -70,6 +54,12 @@ async function runAction(page, action) {
 		case 'hover':
 			await page.locator(selector).hover();
 			break;
+		case 'focus':
+			await page.locator(selector).focus();
+			break;
+		case 'press':
+			await page.locator(selector).press(action.key);
+			break;
 		case 'scroll':
 			if (selector) await page.locator(selector).scrollIntoViewIfNeeded();
 			else await page.evaluate((y) => window.scrollTo(0, y), action.y ?? 0);
@@ -77,13 +67,70 @@ async function runAction(page, action) {
 		case 'wait':
 			await page.waitForTimeout(action.ms ?? 250);
 			break;
+		case 'seekAnimations':
+			await page.locator(selector).evaluateAll((elements, currentTime) => {
+				for (const element of elements) {
+					for (const animation of element.getAnimations({ subtree: true })) {
+						animation.pause();
+						animation.currentTime = currentTime;
+					}
+				}
+			}, action.ms ?? 0);
+			break;
 		default:
 			throw new Error(`Unsupported capture action: ${action.type}`);
 	}
 }
 
+async function waitForReadiness(page, state) {
+	const readiness = state.readiness;
+	if (!readiness) return;
+	const selector = readiness[`${target}Selector`] ?? readiness.selector;
+	if (selector) {
+		await page.locator(selector).waitFor({
+			state: readiness.state ?? 'visible',
+			timeout: readiness.timeoutMs ?? 15_000,
+		});
+	}
+	if (readiness.media === true) {
+		await page.waitForFunction(() => {
+			const imagesReady = [...document.images].every((image) => image.complete);
+			const videosReady = [...document.querySelectorAll('video')].every((video) =>
+				video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA || Boolean(video.poster),
+			);
+			return imagesReady && videosReady;
+		}, undefined, { timeout: readiness.timeoutMs ?? 15_000 });
+	}
+}
+
+async function measurementsFor(page, state) {
+	const measurements = {};
+	for (const measurement of state.measurements ?? []) {
+		const selector = measurement[`${target}Selector`] ?? measurement.selector;
+		measurements[measurement.id] = await page.locator(selector).evaluate((element) => {
+			const box = element.getBoundingClientRect();
+			const style = getComputedStyle(element);
+			return {
+				x: box.x,
+				y: box.y,
+				width: box.width,
+				height: box.height,
+				display: style.display,
+				position: style.position,
+				opacity: style.opacity,
+				transform: style.transform,
+				borderRadius: style.borderRadius,
+				fontFamily: style.fontFamily,
+				fontSize: style.fontSize,
+				lineHeight: style.lineHeight,
+			};
+		});
+	}
+	return measurements;
+}
+
 fs.mkdirSync(outputRoot, { recursive: true });
-await ensureImplementationServer();
+await requireImplementationServer();
 const browser = await chromium.launch();
 const metadata = [];
 
@@ -98,6 +145,7 @@ try {
 
 		for (const pagePlan of plan.pages) {
 			for (const state of pagePlan.states ?? [{ name: 'initial', actions: [] }]) {
+				if (state.viewports?.length && !state.viewports.includes(viewport.name)) continue;
 				if ((target === 'reference' && state.implementationOnly) || (target === 'implementation' && state.referenceOnly)) {
 					continue;
 				}
@@ -105,6 +153,7 @@ try {
 					waitUntil: state.waitUntil ?? 'networkidle',
 					timeout: plan.navigationTimeoutMs ?? 45_000,
 				});
+				await waitForReadiness(page, state);
 				for (const action of state.actions ?? []) await runAction(page, action);
 				if (state.delayMs) await page.waitForTimeout(state.delayMs);
 
@@ -115,7 +164,7 @@ try {
 				await page.screenshot({
 					path: screenshotPath,
 					fullPage: Boolean(state.fullPage),
-					animations: state.animations ?? 'disabled',
+					animations: state.animations ?? 'allow',
 					caret: 'hide',
 				});
 
@@ -125,7 +174,15 @@ try {
 					fonts: [...new Set([...document.querySelectorAll('*')].map((element) => getComputedStyle(element).fontFamily))].slice(0, 30),
 					headings: [...document.querySelectorAll('h1,h2,h3')].map((element) => element.textContent?.trim()).filter(Boolean),
 				}));
-				metadata.push({ viewport: viewport.name, page: pagePlan.id, state: state.name, url: page.url(), ...pageMetadata });
+				metadata.push({
+					viewport: viewport.name,
+					page: pagePlan.id,
+					state: state.name,
+					kind: state.kind,
+					url: page.url(),
+					measurements: await measurementsFor(page, state),
+					...pageMetadata,
+				});
 			}
 		}
 
@@ -133,7 +190,6 @@ try {
 	}
 } finally {
 	await browser.close();
-	previewProcess?.kill();
 }
 
 fs.writeFileSync(path.join(outputRoot, 'metadata.json'), `${JSON.stringify(metadata, null, 2)}\n`);

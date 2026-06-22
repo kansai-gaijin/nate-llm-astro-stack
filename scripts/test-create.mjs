@@ -24,6 +24,56 @@ try {
 	if (staticPackage.devDependencies.wrangler) throw new Error('Static project retained Wrangler.');
 	if (fs.existsSync(path.join(staticProject, 'deployment', 'cloudflare-pages.md'))) throw new Error('Static project retained Cloudflare guide.');
 	if (!fs.existsSync(path.join(staticProject, '.gitignore'))) throw new Error('Generated .gitignore is missing.');
+	for (const required of [
+		'workflow/reference-manifest.json',
+		'workflow/motion-manifest.json',
+		'scripts/validate-reference.mjs',
+		'scripts/dev-server.mjs',
+		'.codex/agents/reference-forensics.toml',
+		'.codex/agents/clone-builder.toml',
+		'.claude/agents/reference-forensics.md',
+		'.claude/agents/clone-builder.md',
+	]) {
+		if (!fs.existsSync(path.join(staticProject, required))) throw new Error(`Generated project is missing ${required}.`);
+	}
+	if (!staticPackage.scripts['loop:serve:start'] || !staticPackage.scripts['loop:serve:stop']) {
+		throw new Error('Generated project is missing orchestrator-owned dev-server scripts.');
+	}
+	const templateReferenceCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-reference.mjs')], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	if (templateReferenceCheck.status !== 0) throw new Error('Generated reference template did not validate.');
+
+	const overviewPath = path.join(staticProject, 'content', 'overview.md');
+	fs.writeFileSync(overviewPath, fs.readFileSync(overviewPath, 'utf8').replace('https://example.com', 'https://example.org'));
+	const unlockedReferenceCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-reference.mjs')], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	if (unlockedReferenceCheck.status === 0 || !unlockedReferenceCheck.stderr.includes('locked')) {
+		throw new Error('A real reference URL did not require locked forensic evidence.');
+	}
+
+	const referenceManifestPath = path.join(staticProject, 'workflow', 'reference-manifest.json');
+	const referenceManifest = JSON.parse(fs.readFileSync(referenceManifestPath, 'utf8'));
+	referenceManifest.status = 'locked';
+	referenceManifest.mediaDecision = { requiresVisualMedia: true, evidence: 'Reference hero contains video.' };
+	referenceManifest.mediaRequirements = [{
+		id: 'hero-video',
+		type: 'video',
+		route: '/',
+		referenceAspectRatio: '16/9',
+		replacementStrategy: 'royalty-free',
+	}];
+	fs.writeFileSync(referenceManifestPath, `${JSON.stringify(referenceManifest, null, 2)}\n`);
+	const missingMediaCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-media.mjs')], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	if (missingMediaCheck.status === 0 || !missingMediaCheck.stderr.includes('hero-video')) {
+		throw new Error('A required reference video did not fail when its replacement was missing.');
+	}
 
 	const cloudflareProject = create('cloudflare-site', ['--hosting', 'cloudflare-pages', '--content', 'microcms-fallback', '--motion', 'three']);
 	const cloudflarePackage = JSON.parse(fs.readFileSync(path.join(cloudflareProject, 'package.json'), 'utf8'));

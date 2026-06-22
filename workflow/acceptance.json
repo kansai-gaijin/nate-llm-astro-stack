@@ -1,27 +1,42 @@
 {
   "hardGates": [
     "Every route in content/overview.md is implemented",
+    "Reference forensics and paired state coverage are locked before implementation",
     "Approved page text is preserved without invented factual claims",
     "Astro check and production build pass",
     "No uncaught browser or console errors",
     "No serious or critical accessibility violations",
     "No horizontal overflow at configured viewports",
+    "Primary desktop geometry matches the reference at 1920px, with 1440px as a secondary desktop check",
+    "Desktop and mobile navigation match the reference structure, geometry, open/closed states, and motion",
     "Required hover, focus, loading, scrolling, and navigation states work",
     "Every visible transition and animation is fluid, interruption-safe, and has reduced-motion behavior",
-    "All media has provenance or is recorded as image-generated"
+    "Every reference media requirement has an integrated generated or royalty-free replacement with provenance"
   ],
   "reviewDimensions": {
-    "layoutAndGeometry": 20,
-    "colorAndSurface": 10,
-    "typography": 10,
-    "responsiveBehavior": 15,
+    "layoutAndGeometry": 15,
+    "colorAndSurface": 8,
+    "typography": 8,
+    "responsiveBehavior": 14,
     "motionAndInteraction": 20,
     "contentArchitecture": 10,
-    "creativeDirectionAndCraft": 15
+    "referenceStateCoverage": 12,
+    "mobileFidelity": 13,
+    "creativeDirectionAndCraft": 0
+  },
+  "fidelityThresholds": {
+    "pairedStateCoverage": 1,
+    "mobileNavigationStateCoverage": 1,
+    "majorGeometryTolerancePx": 8,
+    "majorGeometryToleranceRatio": 0.01,
+    "motionDurationToleranceMs": 50,
+    "motionDurationToleranceRatio": 0.1,
+    "minimumMotionSamples": 3
   },
   "designProgression": {
     "fidelityBaselineRequired": true,
-    "creativeElevationAfterBaseline": true,
+    "creativeElevationAfterBaseline": false,
+    "creativeElevationRequiresExplicitUserApproval": true,
     "effectsMustSupportNarrative": true
   },
   "iterationPolicy": {

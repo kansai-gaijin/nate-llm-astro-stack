@@ -1,0 +1,21 @@
+{
+  "status": "template",
+  "referenceUrl": "https://example.com",
+  "inspectedAt": null,
+  "sourceInspection": {
+    "htmlEvidence": [],
+    "cssEvidence": [],
+    "jsEvidence": [],
+    "libraryEvidence": []
+  },
+  "mediaDecision": {
+    "requiresVisualMedia": null,
+    "evidence": null
+  },
+  "mediaRequirements": [],
+  "navigation": {
+    "desktop": {},
+    "mobile": {}
+  },
+  "pages": []
+}

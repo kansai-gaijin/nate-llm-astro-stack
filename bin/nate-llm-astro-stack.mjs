@@ -26,7 +26,7 @@ function help() {
 Options:
   --hosting <cloudflare-pages|static>
   --content <markdown|microcms-fallback|microcms-required>
-  --motion <css|gsap|three>
+  --motion <auto|css|gsap|three>
   --yes              Accept recommended defaults
   --no-install       Do not install npm dependencies
   --no-git           Do not initialize a new Git repository
@@ -111,11 +111,12 @@ async function main() {
 		'motion',
 		flagValue('--motion') ??
 			(await choose('Which advanced motion dependencies should be preinstalled?', [
-				{ label: 'CSS and Alpine initially; add libraries only when justified', value: 'css' },
+				{ label: 'Inspect the reference first, then choose exact motion tools', value: 'auto' },
+				{ label: 'CSS and Alpine only', value: 'css' },
 				{ label: 'GSAP', value: 'gsap' },
 				{ label: 'GSAP and Three.js', value: 'three' },
 			])),
-		['css', 'gsap', 'three'],
+		['auto', 'css', 'gsap', 'three'],
 	);
 	const install = hasFlag('--no-install') ? false : await confirm('Install dependencies now?', true);
 	const initializeGit = hasFlag('--no-git') ? false : await confirm('Initialize a fresh Git repository?', true);

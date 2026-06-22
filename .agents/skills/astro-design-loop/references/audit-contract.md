@@ -1,32 +1,28 @@
-# Audit contract
+# Clone audit contract
 
 ## Severity
 
-- **P0**: missing route/content, broken navigation, unusable layout, runtime failure, or inaccessible
-  core interaction.
-- **P1**: conspicuous fidelity gap in structure, responsive behavior, typography scale, motion, or a
-  required state. Any abrupt, discontinuous, linear, jarring, or poorly interrupted visible motion
-  is at least P1.
-- **P2**: localized polish issue that does not change structure or task completion.
+- **P0**: missing route/content/media, broken navigation, structurally different mobile navigation,
+  unusable layout, runtime failure, incomplete paired state coverage, or inaccessible core action.
+- **P1**: conspicuous geometry, responsive, typography, crop, motion, loader, hover, or interaction
+  mismatch. Invented reference-derived effects and abrupt or poorly interrupted motion are P1.
+- **P2**: localized polish that does not alter structure, state, or task completion.
 
-## Required finding fields
+## Required evidence
 
-Every finding must include:
+Every finding must include route, viewport, state, expected reference, actual implementation,
+paired evidence, measurement, severity, user impact, and a concrete fix direction.
 
-- route, viewport, and state;
-- expected reference behavior;
-- actual implementation behavior;
-- screenshot, trace, console output, measurement, or reproducible browser evidence;
-- severity and user impact;
-- a concrete fix direction without editing code.
+Audit 1920, 1440, 768, 390, and 360 pixels. Treat 1920 as the primary desktop geometry target. At both mobile widths compare the header and navigation in
+closed, opening/intermediate, open, submenu when present, closing, keyboard, and scroll-lock states.
+Do not accept a generic drawer when the reference uses a different structure or transition.
 
-## Scoring
+For motion, inspect the sample times in `workflow/motion-manifest.json`, final state, reversal, rapid
+interruption, and reduced motion. Confirm duration/easing within `workflow/acceptance.json` limits.
 
-Score the dimensions and weights in `workflow/acceptance.json`. Explain deductions. Review motion
-at real speed and inspect intermediate/reversed states, not only final screenshots. Font-family
-pixels caused solely by an approved Google Font substitution are not a defect, but mismatched type
-scale, weight, width, line height, wrapping, or spacing remain defects.
+For media, verify every `reference-manifest.mediaRequirements` entry has an integrated replacement
+with matching role, aspect ratio, crop, focal point, visual density, and provenance. An empty media
+area or CSS abstraction does not pass when the reference uses photography or video.
 
-Raw pixel similarity is supporting evidence only. It is unreliable when approved content differs
-from the reference, page height differs, dynamic media changes, or antialiasing varies. Prefer
-paired region/state review plus geometry measurements.
+Raw pixel similarity is supporting evidence only. Use paired regions, geometry measurements, and
+state coverage. A score cannot override a failed hard gate.

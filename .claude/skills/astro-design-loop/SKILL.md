@@ -1,6 +1,6 @@
 ---
 name: astro-design-loop
-description: Build or reproduce complete Astro websites from content/overview.md, Markdown page copy, and a visual reference URL using iterative designer, builder, and audit subagents.
+description: Forensically clone a reference website in Astro with paired mobile/desktop evidence, required replacement media, exact motion/navigation, then adapt approved Markdown using iterative builder and audit subagents.
 ---
 
 Read and follow `../../../.agents/skills/astro-design-loop/SKILL.md` as the canonical workflow.

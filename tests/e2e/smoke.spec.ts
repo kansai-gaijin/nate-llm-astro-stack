@@ -9,9 +9,11 @@ const overview = matter(
 ).data as { pages: Array<{ path: string; title?: string }> };
 
 const viewports = [
-	{ name: 'desktop', width: 1440, height: 1000 },
+	{ name: 'desktop-1920', width: 1920, height: 1080 },
+	{ name: 'desktop-1440', width: 1440, height: 1000 },
 	{ name: 'tablet', width: 768, height: 1024 },
-	{ name: 'mobile', width: 390, height: 844 },
+	{ name: 'mobile-390', width: 390, height: 844 },
+	{ name: 'mobile-360', width: 360, height: 800 },
 ];
 
 for (const pageDefinition of overview.pages) {

@@ -23,7 +23,7 @@ The CLI asks for:
 
 - Cloudflare Pages with GitHub integration or generic static hosting;
 - Markdown, microCMS with Markdown fallback, or required microCMS;
-- CSS/Alpine motion, GSAP, or GSAP plus Three.js;
+- reference-first automatic motion-tool selection, CSS/Alpine, GSAP, or GSAP plus Three.js;
 - dependency installation and fresh Git initialization.
 
 For local package development, run `npm run create:test` or use
@@ -59,13 +59,28 @@ Both use the canonical workflow in `.agents/skills/astro-design-loop/`. Native a
 under `.codex/agents/` and `.claude/agents/`. The loop pauses after every three iterations and only
 ends when the user explicitly approves the result.
 
-Agents include reference designer, Astro builder, visual auditor, behavior/motion auditor, and a
-fixture copywriter that creates at least 20 plausible items per dynamic list endpoint with generated
-test imagery where applicable.
+Agents include read-only reference forensics, a clone builder, a post-clone Astro content adapter,
+visual and behavior auditors, and a fixture copywriter. Only one writer runs at a time.
+
+The loop first locks paired desktop/mobile evidence, sources or generates every required image and
+video, reconstructs the reference shell and motion, and only then adapts approved Markdown. Mobile
+navigation is independently captured and audited at 360px and 390px; desktop geometry is measured
+primarily at 1920px and secondarily at 1440px. Delivered reference HTML/CSS/JS is authoritative,
+with exact observed CSS translated into Tailwind rather than reinterpreted.
+
+The orchestrator owns one managed Astro dev server for each three-iteration batch:
+
+```text
+npm run loop:serve:start
+npm run loop:serve:status
+npm run loop:serve:stop
+```
+
+Subagents use that server and do not open their own dev/preview terminals.
 
 ## Quality model
 
-- Reference fidelity is the starting point; art direction and creative elevation follow feedback.
+- Reference fidelity is a hard gate; creative elevation requires explicit user approval afterward.
 - Anything that moves must be fluid. Abrupt transitions, ugly hover states, discontinuous motion,
   and poor interruption/reversal behavior fail the audit.
 - GSAP and Three.js are optional and must justify their performance/accessibility cost.

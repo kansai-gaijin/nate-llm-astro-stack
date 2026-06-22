@@ -14,7 +14,7 @@ test.describe('Japanese typography', () => {
 
 	test('JpText breaks only at BudouX phrase boundaries', async ({ page }) => {
 		await page.goto('/', { waitUntil: 'networkidle' });
-		const phrase = page.locator('.jp-phrase').first();
+		const phrase = page.locator('.jp-phrase:visible').first();
 		await expect(phrase).toBeVisible();
 
 		// BudouX inserts <wbr> between phrases (文節) so kanji compounds never split mid-word.

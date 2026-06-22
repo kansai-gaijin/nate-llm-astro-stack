@@ -1,4 +1,4 @@
 interface:
   display_name: "Astro Design Loop"
-  short_description: "Build Astro sites from reference designs"
-  default_prompt: "Use $astro-design-loop with content/overview.md and subagents to build and iteratively audit this site."
+  short_description: "Clone reference sites in Astro with fidelity"
+  default_prompt: "Use $astro-design-loop to forensically clone the reference site, source required media, and adapt content/overview.md."

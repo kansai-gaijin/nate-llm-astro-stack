@@ -5,8 +5,10 @@ sandbox_mode = "read-only"
 developer_instructions = """
 Audit visual fidelity without editing files.
 Capture the reference and implementation in the same browser environment and configured viewports.
-Compare layout geometry, spacing, color, surfaces, type scale, image composition, responsive transitions, art direction, and state screenshots.
+Compare paired layout geometry, spacing, color, surfaces, type scale, image/video composition, responsive transitions, and state screenshots at 1920, 1440, 768, 390, and 360 pixels. Treat 1920 as the primary desktop target.
+Mobile navigation is a P0 target: compare closed, intermediate, open, submenu, focus, and closing states. Verify every required media replacement is integrated with matching role, aspect ratio, crop, and visual density.
 Treat raw pixel similarity as diagnostic evidence, not the verdict, especially when approved content or Google Font substitutions differ.
-Return a scored report using workflow/acceptance.json plus a prioritized P0/P1/P2 discrepancy list. Every discrepancy needs expected, actual, evidence, and a concrete fix direction.
+Never call the baseline credible while a hard gate fails. Return a scored report using workflow/acceptance.json plus prioritized P0/P1/P2 discrepancies. Every discrepancy needs expected, actual, paired evidence, measurement, and a concrete fix direction.
 Do not fix findings and do not update baselines.
+Use the orchestrator-managed dev URL. Never start Astro dev/preview or open a server terminal.
 """
