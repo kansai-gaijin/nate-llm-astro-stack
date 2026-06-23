@@ -28,6 +28,7 @@ try {
 		'workflow/reference-manifest.json',
 		'workflow/motion-manifest.json',
 		'scripts/validate-reference.mjs',
+		'scripts/validate-artifacts.mjs',
 		'scripts/dev-server.mjs',
 		'.codex/agents/reference-forensics.toml',
 		'.codex/agents/clone-builder.toml',
@@ -44,6 +45,16 @@ try {
 		encoding: 'utf8',
 	});
 	if (templateReferenceCheck.status !== 0) throw new Error('Generated reference template did not validate.');
+	const rogueCapture = path.join(staticProject, 'rogue-screenshot.png');
+	fs.writeFileSync(rogueCapture, 'not-an-image');
+	const artifactCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-artifacts.mjs')], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	fs.rmSync(rogueCapture, { force: true });
+	if (artifactCheck.status === 0 || !artifactCheck.stderr.includes('rogue-screenshot.png')) {
+		throw new Error('A root screenshot did not fail artifact validation.');
+	}
 
 	const overviewPath = path.join(staticProject, 'content', 'overview.md');
 	fs.writeFileSync(overviewPath, fs.readFileSync(overviewPath, 'utf8').replace('https://example.com', 'https://example.org'));

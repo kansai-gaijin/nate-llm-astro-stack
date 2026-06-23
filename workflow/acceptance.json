@@ -2,11 +2,13 @@
   "hardGates": [
     "Every route in content/overview.md is implemented",
     "Reference forensics and paired state coverage are locked before implementation",
+    "Only the primary and explicitly listed referencePages are cloned; unlisted reference pages are not crawled",
     "Approved page text is preserved without invented factual claims",
     "Astro check and production build pass",
     "No uncaught browser or console errors",
     "No serious or critical accessibility violations",
     "No horizontal overflow at configured viewports",
+    "Screenshots, videos, traces, and source dumps are stored only under ignored artifacts/ folders",
     "Primary desktop geometry matches the reference at 1920px, with 1440px as a secondary desktop check",
     "Desktop and mobile navigation match the reference structure, geometry, open/closed states, and motion",
     "Required hover, focus, loading, scrolling, and navigation states work",

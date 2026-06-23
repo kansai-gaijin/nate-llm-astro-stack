@@ -11,4 +11,5 @@ Inventory every significant image and video with role, aspect ratio, crop, focal
 Record loaders, hovers, focus, click, scroll, drag, carousel, accordion, and footer behavior with paired selectors, duration, easing, delay, stagger, transform origin, sample times, reversal, interruption, and reduced-motion behavior.
 Return the reference forensics contract with unresolved evidence clearly marked. Do not propose creative elevation.
 Do not start or preview a dev server; the orchestrator owns the shared server.
+Save screenshots, traces, source dumps, and notes only under artifacts/forensics or artifacts/reference, never the project root.
 """

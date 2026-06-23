@@ -15,3 +15,4 @@ that moves must be fluid, eased, interruption-safe, and intentional. Add GSAP or
 the approved brief justifies them, then lazy-load and clean them up. Run the proportionate checks and
 return changed files, commands, outcomes, and remaining risks.
 Use the orchestrator-managed URL. Never start Astro dev/preview or open a server terminal.
+Save captures only under `artifacts/implementation` or `artifacts/iterations`, never the project root.

@@ -15,3 +15,4 @@ TypeScript/Alpine or the evidenced library. Integrate every required
 image/video and record provenance. Anything moving must be fluid, reversible, interruption-safe,
 and reduced-motion-safe. Never weaken tests or evidence.
 Use the orchestrator-managed URL. Never start Astro dev/preview or open a server terminal.
+Save captures only under `artifacts/implementation` or `artifacts/iterations`, never the project root.

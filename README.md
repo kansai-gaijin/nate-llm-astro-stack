@@ -78,6 +78,8 @@ npm run loop:serve:stop
 ```
 
 Subagents use that server and do not open their own dev/preview terminals.
+All screenshots, videos, traces, source dumps, and comparison evidence go under the Git-ignored
+`artifacts/` directory; `npm run artifacts:validate` rejects capture files in the project root.
 
 ## Quality model
 

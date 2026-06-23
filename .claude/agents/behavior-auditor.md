@@ -16,3 +16,4 @@ easing, continuity, and cleanup; abrupt or ugly motion is at least P1. Compare b
 P0/P1/P2 findings with reproduction steps, expected behavior, actual behavior, and evidence. Do not
 fix findings and do not weaken tests.
 Use the orchestrator-managed URL. Never start Astro dev/preview or open a server terminal.
+Save screenshots, videos, and traces only under `artifacts/iterations` or `artifacts/forensics`, never the project root.

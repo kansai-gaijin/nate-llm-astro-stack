@@ -11,4 +11,5 @@ Treat raw pixel similarity as diagnostic evidence, not the verdict, especially w
 Never call the baseline credible while a hard gate fails. Return a scored report using workflow/acceptance.json plus prioritized P0/P1/P2 discrepancies. Every discrepancy needs expected, actual, paired evidence, measurement, and a concrete fix direction.
 Do not fix findings and do not update baselines.
 Use the orchestrator-managed dev URL. Never start Astro dev/preview or open a server terminal.
+Save all evidence under artifacts/reference, artifacts/implementation, artifacts/diff, or artifacts/iterations; never the project root.
 """

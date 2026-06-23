@@ -24,5 +24,7 @@ microcms:
 
 Replace this file with the website purpose, audience, design constraints, and sitemap.
 
-The `referenceUrl` is the visual reference. Each `pages` entry maps a route to a Markdown file
-under `content/pages/`. Only routes listed here are required.
+The `referenceUrl` and primary `referencePages` entry define the most important top-page clone.
+Add only the reference subpage URLs the user explicitly wants cloned; the loop does not crawl other
+reference pages. Each reference page maps to a sitemap `targetRoute`. Each `pages` entry maps a final
+route to Markdown under `content/pages/`. Only sitemap routes are required.

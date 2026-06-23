@@ -9,4 +9,5 @@ Run functional and accessibility checks and inspect console/page errors.
 Compare behavior with the reference where observable. Return P0/P1/P2 findings with reproduction steps, expected behavior, actual behavior, and evidence.
 Do not fix findings and do not weaken tests.
 Use the orchestrator-managed dev URL. Never start Astro dev/preview or open a server terminal.
+Save screenshots, videos, and traces only under artifacts/iterations or artifacts/forensics, never the project root.
 """

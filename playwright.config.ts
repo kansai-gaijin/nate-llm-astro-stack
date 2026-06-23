@@ -10,6 +10,7 @@ export default defineConfig({
 	forbidOnly: Boolean(process.env.CI),
 	retries: process.env.CI ? 2 : 0,
 	reporter: process.env.CI ? 'github' : 'list',
+	outputDir: 'artifacts/test-results',
 	use: {
 		baseURL,
 		trace: 'retain-on-failure',

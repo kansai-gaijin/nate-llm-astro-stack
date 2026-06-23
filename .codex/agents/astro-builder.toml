@@ -11,4 +11,5 @@ Preserve approved copy and every route in the sitemap. Do not invent business fa
 Implement responsive behavior, interactions, motion, loading, focus states, and reduced-motion behavior rather than only static screenshots. Anything that moves must be fluid, eased, interruption-safe, and visually intentional.
 Run the proportionate checks for your change and return changed files, commands, outcomes, and remaining risks.
 Use the orchestrator-managed dev URL. Never start Astro dev/preview or open a server terminal.
+Save captures only under artifacts/implementation or the current artifacts/iterations folder, never the project root.
 """

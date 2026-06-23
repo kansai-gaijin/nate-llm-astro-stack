@@ -8,6 +8,10 @@ description: Forensically reproduce complete reference websites in Astro before 
 Treat invocation as permission to use the project subagents. Keep one write-capable agent active at
 a time. The objective is reference reconstruction, not reference-inspired design.
 
+Store every screenshot, video, trace, source dump, and temporary visual artifact under the ignored
+`artifacts/` tree. Use `artifacts/reference`, `implementation`, `diff`, `forensics`, and `iterations`
+as appropriate. Never place capture evidence in the project root.
+
 Read the project skills `astro-best-practices`, `alpinejs-best-practices`, `tailwindcss-4`, and
 `coding-best-practices`. Read `web-design-direction` only after the user explicitly authorizes
 creative elevation.
@@ -63,6 +67,7 @@ Run:
 
 ```text
 npm run reference:validate
+npm run artifacts:validate
 npm run qa:capture:reference
 ```
 
@@ -127,6 +132,7 @@ Run the hard checks and capture the clone:
 
 ```text
 npm run reference:validate
+npm run artifacts:validate
 npm run media:validate
 npm run check
 npm run build
@@ -167,6 +173,7 @@ Re-run the complete gate after content adaptation:
 ```text
 npm run content:validate
 npm run reference:validate
+npm run artifacts:validate
 npm run dynamic:validate
 npm run media:validate
 npm run check

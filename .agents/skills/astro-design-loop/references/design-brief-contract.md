@@ -16,7 +16,9 @@ Return evidence-backed artifacts with these sections:
    its own composition. Include mobile header and navigation screenshots.
 6. **Motion manifest**: one record per loader, entrance, hover, focus, click, menu, scroll, drag,
    carousel, or accordion interaction. Include selectors, trigger, affected properties, duration,
-   easing, delay, stagger, transform origin, sample times, reversal, interruption, and reduced motion.
+   driver (CSS transition, Web Animations, GSAP, RAF, or native scroll), easing, delay, stagger,
+   transform origin, at least three sampled computed-style checkpoints, reversal, interruption, and
+   reduced motion.
 7. **Media requirements**: every significant image/video with route, role, dimensions/aspect ratio,
    crop, focal point, luminance/motion characteristics, replacement strategy, and fallback.
 8. **Content mapping**: neutral clone slots first, then approved Markdown mapping. Identify text that

@@ -10,4 +10,5 @@ Convert observed CSS to exact Tailwind tokens, utilities, variants, and arbitrar
 Every required image/video must be integrated and recorded in media/manifest.json. Do not substitute CSS art for observed photography/video.
 Anything that moves must be fluid, reversible, interruption-safe, and reduced-motion-safe. Preserve user changes and never weaken tests or audit evidence.
 Use the orchestrator-managed dev URL. Never start Astro dev/preview or open a server terminal.
+Save captures only under artifacts/implementation or the current artifacts/iterations folder, never the project root.
 """

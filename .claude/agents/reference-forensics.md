@@ -18,3 +18,4 @@ CSS abstractions for observed media. Record all interactions with paired selecto
 stagger, sample times, reversal, interruption, and reduced motion. Return the reference forensics
 contract. Do not propose creative elevation.
 Do not start Astro dev/preview or open a server terminal; use the orchestrator-managed URL.
+Save evidence only under `artifacts/forensics` or `artifacts/reference`, never the project root.

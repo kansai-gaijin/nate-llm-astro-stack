@@ -19,6 +19,10 @@ const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
 const overview = matter(fs.readFileSync(path.join(root, 'content', 'overview.md'), 'utf8')).data;
 const implementationBaseUrl = args.get('--base-url') ?? process.env.CAPTURE_BASE_URL ?? 'http://127.0.0.1:4321';
 const outputRoot = path.resolve(args.get('--output') ?? path.join('artifacts', target));
+const artifactsRoot = path.resolve('artifacts');
+if (outputRoot !== artifactsRoot && !outputRoot.startsWith(`${artifactsRoot}${path.sep}`)) {
+	throw new Error('Capture output must stay inside the ignored artifacts/ directory.');
+}
 
 async function isReachable(url) {
 	try {

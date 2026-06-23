@@ -87,6 +87,9 @@ Sites built from this template are primarily Japanese. Treat `ja` as the default
   three until the user explicitly approves the result.
 - The orchestrator alone starts and stops one managed Astro dev server per three-iteration batch.
   Subagents use that URL and must never start `astro dev`, `astro preview`, or separate server terminals.
+- Save every screenshot, video, trace, DOM/source dump, and visual note under `artifacts/` using the
+  appropriate `reference/`, `implementation/`, `diff/`, `forensics/`, or `iterations/` subfolder.
+  Never save capture evidence in the project root. `artifacts/` is ignored by Git.
 
 ## Required verification
 
@@ -95,6 +98,7 @@ Run these before reporting a batch complete:
 ```text
 npm run content:validate
 npm run reference:validate
+npm run artifacts:validate
 npm run dynamic:validate
 npm run media:validate
 npm run check
