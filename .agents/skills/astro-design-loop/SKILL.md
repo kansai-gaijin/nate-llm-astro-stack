@@ -18,13 +18,17 @@ creative elevation.
    workflow JSON files. Read `scaffold.config.json` when present.
 2. Run `npm run content:validate`.
 3. Implement only sitemap routes. `/` is always required.
-4. Determine the content source and Markdown fallback behavior.
-5. Read [design-brief-contract.md](references/design-brief-contract.md) and
+4. Treat `referencePages` as the complete clone-source allowlist. Its primary top-page URL is
+   mandatory. Inspect additional reference subpages only when the user explicitly lists them; never
+   crawl or clone the rest of the reference site.
+5. Determine the content source and Markdown fallback behavior.
+6. Read [design-brief-contract.md](references/design-brief-contract.md) and
    [audit-contract.md](references/audit-contract.md).
 
 ## 2. Perform reference forensics before design or implementation
 
-Delegate a read-only task to `reference-forensics`. Do not delegate to a creative designer.
+Delegate a read-only task to `reference-forensics` for each explicitly listed reference page. Do
+not delegate to a creative designer or discover additional clone targets by crawling links.
 
 Treat the reference's delivered HTML, CSS, and JavaScript as the authority for structure, computed
 values, breakpoints, and behavior. Record source evidence before interpreting screenshots. Do not

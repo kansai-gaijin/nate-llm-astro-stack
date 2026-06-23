@@ -31,8 +31,9 @@ For local package development, run `npm run create:test` or use
 
 ## Provide content
 
-1. Replace `content/overview.md`. Its frontmatter defines the reference URL, locale, required
-   sitemap, and dynamic-content requirements.
+1. Replace `content/overview.md`. Its frontmatter defines the primary top-page reference URL,
+   optional explicitly selected reference subpages, locale, required sitemap, and dynamic-content
+   requirements. Unlisted reference pages are not crawled or cloned.
 2. Add one Markdown file under `content/pages/` for every sitemap entry. Include all approved page
    text; the loop may reorganize it but cannot invent business facts.
 3. Copy `.env.example` to `.env` and fill only the integrations you use.

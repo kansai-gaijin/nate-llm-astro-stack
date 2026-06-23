@@ -23,6 +23,8 @@ elevation is disabled until the clone gate passes and the user explicitly reques
 ## Content invariants
 
 - Treat `content/overview.md` as the sitemap and scope authority.
+- Treat `referencePages` in the overview as the complete clone-source allowlist. The primary top
+  page is mandatory. Do not crawl or clone unlisted reference subpages.
 - Treat `content/pages/*.md` as approved copy. Reorganize it when required by the design, but do not
   invent factual claims, testimonials, statistics, services, locations, or contact details.
 - Implement `/` in every project. Implement other routes only when listed in the sitemap.

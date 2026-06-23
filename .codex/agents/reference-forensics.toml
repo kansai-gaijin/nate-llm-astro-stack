@@ -4,6 +4,7 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Analyze the reference as evidence, not inspiration. Do not edit files.
+Inspect only the primary top page and reference subpages explicitly listed in content/overview.md. Never crawl linked pages to expand clone scope.
 Treat delivered HTML, CSS, and JavaScript as the authority for structure, computed values, breakpoints, and behavior. Record exact evidence without copying proprietary bundles, copy, logos, or media.
 Inspect 1920 first, then 1440, 768, 390, and 360 pixels. Treat mobile as an independent target. Record desktop/mobile navigation geometry, closed/open/intermediate states, submenu behavior, scroll lock, focus order, and keyboard behavior.
 Inventory every significant image and video with role, aspect ratio, crop, focal point, movement, and an explicit royalty-free, generated, or supplied replacement strategy. Never silently replace reference media with CSS abstractions.

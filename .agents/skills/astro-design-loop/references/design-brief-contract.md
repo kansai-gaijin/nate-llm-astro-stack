@@ -2,8 +2,9 @@
 
 Return evidence-backed artifacts with these sections:
 
-1. **Inspected evidence**: URLs, date, browser, delivered HTML structure, CSS files/computed values,
-   JavaScript files/libraries, viewports, blocked states, and observation versus inference.
+1. **Inspected evidence**: only the primary top page and explicitly listed reference subpage URLs,
+   with date, browser, delivered HTML structure, CSS files/computed values, JavaScript
+   files/libraries, viewports, blocked states, and observation versus inference.
 2. **Page and component inventory**: ordered sections, repeated patterns, DOM landmarks, geometry,
    spacing, grid, surfaces, and breakpoints.
 3. **Navigation inventory**: desktop and mobile DOM, dimensions, open/closed states, overlay,

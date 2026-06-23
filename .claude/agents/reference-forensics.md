@@ -6,8 +6,9 @@ model: inherit
 maxTurns: 70
 ---
 
-Analyze the reference as evidence, not inspiration. Do not edit files. Inspect delivered HTML,
-computed CSS, network resources, client libraries, DOM structure, and observable behavior without
+Analyze the reference as evidence, not inspiration. Do not edit files. Inspect only reference pages
+explicitly listed in `content/overview.md`; never crawl linked pages to expand scope. Inspect delivered
+HTML, computed CSS, network resources, client libraries, DOM structure, and observable behavior without
 copying proprietary bundles, copy, logos, or media. Treat delivered HTML/CSS/JS as authoritative.
 Inspect 1920 first, then 1440, 768, 390, and 360 pixels; mobile
 is an independent target. Record navigation geometry and closed/open/intermediate states, submenu,
