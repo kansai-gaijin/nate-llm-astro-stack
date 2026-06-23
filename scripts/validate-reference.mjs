@@ -9,6 +9,12 @@ const plan = readJson('workflow/reference-plan.json');
 const reference = readJson('workflow/reference-manifest.json');
 const motion = readJson('workflow/motion-manifest.json');
 const errors = [];
+const referencePages = overview.referencePages ?? [{
+	id: 'home',
+	url: overview.referenceUrl,
+	targetRoute: '/',
+	primary: true,
+}];
 
 const requiredViewports = {
 	'desktop-1920': (viewport) => viewport.width === 1920,
@@ -47,14 +53,24 @@ if (!placeholderReference) {
 		errors.push('Record whether the reference requires image/video replacements and the supporting evidence.');
 	}
 
-	const plannedPaths = new Set((plan.pages ?? []).map((page) => page.path));
-	const inspectedPaths = new Set((reference.pages ?? []).map((page) => page.path));
-	for (const page of overview.pages ?? []) {
-		if (!plannedPaths.has(page.path)) errors.push(`Missing capture plan for route: ${page.path}`);
-		if (!inspectedPaths.has(page.path)) errors.push(`Missing reference forensics for route: ${page.path}`);
+	const plannedSources = new Map((plan.pages ?? []).map((page) => [page.sourceId, page]));
+	const inspectedSources = new Set((reference.pages ?? []).map((page) => page.sourceId));
+	const allowedSources = new Set(referencePages.map((page) => page.id));
+	for (const referencePage of referencePages) {
+		const planned = plannedSources.get(referencePage.id);
+		if (!planned) errors.push(`Missing capture plan for reference page: ${referencePage.id}`);
+		else {
+			if (planned.referenceUrl !== referencePage.url) errors.push(`Capture URL mismatch for reference page: ${referencePage.id}`);
+			if (planned.implementationPath !== referencePage.targetRoute) errors.push(`Implementation route mismatch for reference page: ${referencePage.id}`);
+		}
+		if (!inspectedSources.has(referencePage.id)) errors.push(`Missing reference forensics for reference page: ${referencePage.id}`);
+	}
+	for (const page of plan.pages ?? []) {
+		if (!allowedSources.has(page.sourceId)) errors.push(`Capture plan includes an unrequested reference page: ${page.sourceId}`);
 	}
 
-	const home = plan.pages?.find((page) => page.path === '/');
+	const primaryReference = referencePages.find((page) => page.primary === true);
+	const home = plan.pages?.find((page) => page.sourceId === primaryReference?.id);
 	const homeKinds = new Set((home?.states ?? []).map((state) => state.kind));
 	for (const kind of ['settled', 'navigation-hover', 'mobile-navigation-closed', 'mobile-navigation-open']) {
 		if (!homeKinds.has(kind)) errors.push(`Homepage capture plan requires state kind: ${kind}`);

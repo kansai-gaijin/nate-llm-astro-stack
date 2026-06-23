@@ -12,7 +12,9 @@
   "pages": [
     {
       "id": "home",
-      "path": "/",
+      "sourceId": "home",
+      "referenceUrl": "https://example.com",
+      "implementationPath": "/",
       "states": [
         {
           "name": "template-initial",

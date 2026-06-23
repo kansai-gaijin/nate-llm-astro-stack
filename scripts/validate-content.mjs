@@ -11,7 +11,7 @@ if (!fs.existsSync(overviewPath)) {
 	errors.push('Missing content/overview.md.');
 } else {
 	const overview = matter(fs.readFileSync(overviewPath, 'utf8'));
-	const { referenceUrl, pages, microcms } = overview.data;
+	const { referenceUrl, referencePages, pages, microcms } = overview.data;
 
 	try {
 		const parsedUrl = new URL(referenceUrl);
@@ -23,6 +23,35 @@ if (!fs.existsSync(overviewPath)) {
 		}
 	} catch {
 		errors.push('content/overview.md must define a valid referenceUrl in frontmatter.');
+	}
+
+	if (!Array.isArray(referencePages) || referencePages.length === 0) {
+		errors.push('content/overview.md must define referencePages with the primary top page.');
+	} else {
+		const ids = new Set();
+		const targets = new Set();
+		for (const [index, referencePage] of referencePages.entries()) {
+			const label = `referencePages[${index}]`;
+			if (!referencePage?.id || ids.has(referencePage.id)) errors.push(`${label}.id must be unique.`);
+			else ids.add(referencePage.id);
+			try {
+				const parsed = new URL(referencePage.url);
+				if (!['http:', 'https:'].includes(parsed.protocol)) errors.push(`${label}.url must use http or https.`);
+			} catch {
+				errors.push(`${label}.url must be valid.`);
+			}
+			if (typeof referencePage.targetRoute !== 'string' || !referencePage.targetRoute.startsWith('/')) {
+				errors.push(`${label}.targetRoute must start with '/'.`);
+			} else if (targets.has(referencePage.targetRoute)) {
+				errors.push(`Duplicate reference targetRoute: ${referencePage.targetRoute}`);
+			} else targets.add(referencePage.targetRoute);
+		}
+		const primary = referencePages.filter((referencePage) => referencePage.primary === true);
+		if (primary.length !== 1) errors.push('referencePages must contain exactly one primary page.');
+		else {
+			if (primary[0].url !== referenceUrl) errors.push('The primary reference page URL must equal referenceUrl.');
+			if (primary[0].targetRoute !== '/') errors.push("The primary reference page must target '/'.");
+		}
 	}
 
 	if (!Array.isArray(pages) || pages.length === 0) {
@@ -60,6 +89,11 @@ if (!fs.existsSync(overviewPath)) {
 		}
 
 		if (!routes.has('/')) errors.push("The sitemap must include the top page route '/'.");
+		for (const referencePage of referencePages ?? []) {
+			if (!routes.has(referencePage.targetRoute)) {
+				errors.push(`Reference page ${referencePage.id} targets a route missing from the sitemap: ${referencePage.targetRoute}`);
+			}
+		}
 	}
 
 	if (microcms?.required && !Array.isArray(microcms.endpoints)) {

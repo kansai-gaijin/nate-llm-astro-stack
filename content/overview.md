@@ -1,6 +1,11 @@
 ---
 siteName: Example Site
 referenceUrl: https://example.com
+referencePages:
+  - id: home
+    url: https://example.com
+    targetRoute: /
+    primary: true
 locale: ja
 pages:
   - path: /
