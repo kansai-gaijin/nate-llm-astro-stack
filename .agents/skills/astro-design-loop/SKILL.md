@@ -24,7 +24,8 @@ creative elevation.
 3. Implement only sitemap routes. `/` is always required.
 4. Treat `referencePages` as the complete clone-source allowlist. Its primary top-page URL is
    mandatory. Inspect additional reference subpages only when the user explicitly lists them; never
-   crawl or clone the rest of the reference site.
+   crawl or clone the rest of the reference site. Sitemap routes without a mapped reference page may
+   reuse extracted components and patterns but do not require whole-page reference comparison.
 5. Determine the content source and Markdown fallback behavior.
 6. Read [design-brief-contract.md](references/design-brief-contract.md) and
    [audit-contract.md](references/audit-contract.md).

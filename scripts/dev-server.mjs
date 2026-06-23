@@ -43,7 +43,7 @@ async function start() {
 	const astroCli = path.join(root, 'node_modules', 'astro', 'bin', 'astro.mjs');
 	if (!fs.existsSync(astroCli)) throw new Error('Astro is not installed. Run npm install first.');
 	const log = fs.openSync(logPath, 'a');
-	const child = spawn(process.execPath, [astroCli, 'dev', '--host', host, '--port', String(port)], {
+	const child = spawn(process.execPath, [astroCli, 'dev', '--force', '--host', host, '--port', String(port)], {
 		cwd: root,
 		detached: true,
 		stdio: ['ignore', log, log],
