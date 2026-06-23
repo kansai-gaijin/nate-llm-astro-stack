@@ -1,6 +1,6 @@
 ---
 name: astro-design-loop
-description: Forensically clone a reference website in Astro with paired mobile/desktop evidence, required replacement media, exact motion/navigation, then adapt approved Markdown using iterative builder and audit subagents.
+description: Route Astro work into separate literal-clone and later content-adaptation loops; never run both phases together.
 ---
 
 Read and follow `../../../.agents/skills/astro-design-loop/SKILL.md` as the canonical workflow.

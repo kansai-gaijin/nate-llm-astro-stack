@@ -1,4 +1,4 @@
 interface:
-  display_name: "Astro Design Loop"
-  short_description: "Clone reference sites in Astro with fidelity"
-  default_prompt: "Use $astro-design-loop to forensically clone the reference site, source required media, and adapt content/overview.md."
+  display_name: "Astro Design Loop Router"
+  short_description: "Route separate clone and adaptation loops"
+  default_prompt: "Use $astro-design-loop to route this work into a literal reference-clone loop first and a separate content-adaptation loop only after explicit clone approval."

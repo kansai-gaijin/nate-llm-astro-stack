@@ -42,29 +42,46 @@ The top page (`/`) is mandatory. Inner pages are generated only when listed in t
 Dynamic content uses one typed API and can switch between microCMS and
 `content/dynamic/<endpoint>/*.md` without page/component changes.
 
-## Run the loop
+## Run the two loops
+
+First, run the literal clone loop. It does not use your supplied page content.
 
 Codex:
 
 ```text
-Use $astro-design-loop and the project subagents to build the site from content/overview.md.
+Use $astro-reference-clone to build and audit the literal reference clone.
 ```
 
 Claude Code:
 
 ```text
-/astro-design-loop
+/astro-reference-clone
 ```
 
-Both use the canonical workflow in `.agents/skills/astro-design-loop/`. Native agent adapters live
-under `.codex/agents/` and `.claude/agents/`. The loop pauses after every three iterations and only
-ends when the user explicitly approves the result.
+After you explicitly approve the clone, start a new invocation.
+
+Codex:
+
+```text
+Use $astro-content-adaptation to adapt the approved Markdown into the approved clone.
+```
+
+Claude Code:
+
+```text
+/astro-content-adaptation
+```
+
+The adaptation command is blocked until clone approval. Both loops pause after every three
+iterations and use separate state/audit artifacts.
 
 Agents include read-only reference forensics, a clone builder, a post-clone Astro content adapter,
 visual and behavior auditors, and a fixture copywriter. Only one writer runs at a time.
 
-The loop first locks paired desktop/mobile evidence, sources or generates every required image and
-video, reconstructs the reference shell and motion, and only then adapts approved Markdown. Mobile
+The clone loop first locks paired desktop/mobile evidence, downloads the reference site's visible
+images and video into an isolated temporary clone directory, and reconstructs the shell and motion
+without reading supplied page copy. The separate adaptation loop then replaces those temporary
+assets with generated or royalty-free media and adapts the approved Markdown. Mobile
 navigation is independently captured and audited at 360px and 390px; desktop geometry is measured
 primarily at 1920px and secondarily at 1440px. Delivered reference HTML/CSS/JS is authoritative,
 with exact observed CSS translated into Tailwind rather than reinterpreted.

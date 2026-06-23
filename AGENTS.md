@@ -2,12 +2,10 @@
 
 ## Purpose
 
-Build every route declared in `content/overview.md` from the approved Markdown copy while matching
-the supplied reference URL as closely as practical. Invoke the `astro-design-loop` skill and its
-project subagents for full site-generation work.
-
-Reconstruct the reference shell and behavior before adapting the approved content. Creative
-elevation is disabled until the clone gate passes and the user explicitly requests it.
+Run two separate workflows. First build a literal non-production clone under `/__clone/*` without
+using supplied site content. Stop after three-iteration batches until the user explicitly approves
+the clone. Only in a later invocation may the adaptation workflow build final sitemap routes from
+approved content. Never combine both phases.
 
 ## Stack invariants
 
@@ -22,7 +20,9 @@ elevation is disabled until the clone gate passes and the user explicitly reques
 
 ## Content invariants
 
-- Treat `content/overview.md` as the sitemap and scope authority.
+- During cloning, read only `referencePages` frontmatter. Do not read or use overview body copy,
+  `content/pages`, wireframes, supporting brand documents, logos, microCMS, or `public/media`.
+- During adaptation, treat `content/overview.md` as the sitemap and scope authority.
 - Treat `referencePages` in the overview as the complete clone-source allowlist. The primary top
   page is mandatory. Do not crawl or clone unlisted reference subpages.
 - Treat `content/pages/*.md` as approved copy. Reorganize it when required by the design, but do not
@@ -44,11 +44,14 @@ elevation is disabled until the clone gate passes and the user explicitly reques
   jarring interruption, and ugly hover/animation states are defects.
 - Choose the closest sensible Google Fonts alternative when the reference font is unavailable and
   record the choice in `workflow/font-map.json`.
-- Do not copy logos, photography, video, or proprietary icons from the reference site.
+- During cloning, download exact reference images/video/SVGs into `public/clone-temp` without asking
+  the user; record them in `workflow/clone-assets.json`. They are temporary QA evidence only.
+- During adaptation, replace all reference copy/media with approved content and royalty-free,
+  generated, or supplied assets. Remove clone routes/assets before shipping.
 - Inventory every significant reference image and video before implementation. Media is required
   structure, not optional polish; do not replace observed photography/video with CSS abstraction,
   gradients, icons, or empty boxes.
-- Source close royalty-free images or generate original images as appropriate. When the reference
+- In adaptation, source close royalty-free images or generate original images as appropriate. When the reference
   or content calls for video, search for a close royalty-free replacement. Record
   the source URL, license URL, author, and retrieval date in `media/manifest.json`. If no suitable
   licensed media exists, document the searched sources and pause for approval of a fallback.
@@ -77,27 +80,42 @@ Sites built from this template are primarily Japanese. Treat `ja` as the default
 - The main agent is the orchestrator and final decision-maker.
 - `reference-forensics` performs read-only DOM/CSS/source, responsive, navigation, motion, and media analysis.
 - `clone-builder` is the only writer during the reference-clone phase.
-- `fixture-copywriter` creates synthetic Markdown test content and generated imagery for declared
-  dynamic collections. It may edit content/media fixtures but not application code.
+- During adaptation only, `fixture-copywriter` creates synthetic Markdown test content and generated
+  imagery for declared dynamic collections. It may edit content/media fixtures but not application code.
 - `astro-builder` becomes the only writer after the clone gate, adapting approved content and fixing
   orchestrator-approved discrepancies. Never run it concurrently with `clone-builder`.
 - `visual-auditor` and `behavior-auditor` are read-only and may run in parallel after a build.
 - Auditors return evidence and prioritized discrepancies; they do not fix their own findings.
-- Run exactly three build-audit iterations, then pause for user feedback. Continue in batches of
-  three until the user explicitly approves the result.
+- Clone and adaptation have separate iteration counters, audit receipts, artifacts, and approval
+  states. Each pauses after exactly three iterations. Adaptation remains locked until the user
+  explicitly approves a passing clone.
 - The orchestrator alone starts and stops one managed Astro dev server per three-iteration batch.
   Subagents use that URL and must never start `astro dev`, `astro preview`, or separate server terminals.
 - Save every screenshot, video, trace, DOM/source dump, and visual note under `artifacts/` using the
-  appropriate `reference/`, `implementation/`, `diff/`, `forensics/`, or `iterations/` subfolder.
+  appropriate `clone/` or `adaptation/` phase subfolder and its `reference/`, `implementation/`,
+  `diff/`, `forensics/`, or `iterations/` child.
   Never save capture evidence in the project root. `artifacts/` is ignored by Git.
 
 ## Required verification
 
-Run these before reporting a batch complete:
+During the clone loop run:
+
+```text
+npm run reference:validate
+npm run phase:validate
+npm run artifacts:validate
+npm run clone:assets:validate
+npm run check
+npm run build
+npm run test:e2e
+npm run qa:diff
+```
+
+During adaptation run:
 
 ```text
 npm run content:validate
-npm run reference:validate
+npm run phase:validate
 npm run artifacts:validate
 npm run dynamic:validate
 npm run media:validate
@@ -105,6 +123,8 @@ npm run check
 npm run build
 npm run test:e2e
 ```
+
+Before deployment run `npm run shipping:validate`.
 
 When microCMS endpoints are declared, also run `npm run microcms:check`. Use
 `workflow/acceptance.json` and the current iteration evidence under `artifacts/` for audit claims.

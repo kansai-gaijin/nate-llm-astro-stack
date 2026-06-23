@@ -1,0 +1,17 @@
+{
+  "clone": {
+    "totalIterations": 0,
+    "batchIterations": 0,
+    "inProgress": false,
+    "awaitingFeedback": false,
+    "approved": false
+  },
+  "adaptation": {
+    "unlocked": false,
+    "totalIterations": 0,
+    "batchIterations": 0,
+    "inProgress": false,
+    "awaitingFeedback": false,
+    "approved": false
+  }
+}

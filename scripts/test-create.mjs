@@ -27,18 +27,40 @@ try {
 	for (const required of [
 		'workflow/reference-manifest.json',
 		'workflow/motion-manifest.json',
+		'workflow/phase-state.json',
+		'workflow/clone-assets.json',
 		'scripts/validate-reference.mjs',
+		'scripts/validate-phase.mjs',
+		'scripts/validate-clone-assets.mjs',
+		'scripts/validate-shipping.mjs',
+		'scripts/phase-state.mjs',
 		'scripts/validate-artifacts.mjs',
 		'scripts/dev-server.mjs',
 		'.codex/agents/reference-forensics.toml',
 		'.codex/agents/clone-builder.toml',
 		'.claude/agents/reference-forensics.md',
 		'.claude/agents/clone-builder.md',
+		'.agents/skills/astro-reference-clone/SKILL.md',
+		'.agents/skills/astro-content-adaptation/SKILL.md',
+		'.claude/skills/astro-reference-clone/SKILL.md',
+		'.claude/skills/astro-content-adaptation/SKILL.md',
 	]) {
 		if (!fs.existsSync(path.join(staticProject, required))) throw new Error(`Generated project is missing ${required}.`);
 	}
 	if (!staticPackage.scripts['loop:serve:start'] || !staticPackage.scripts['loop:serve:stop']) {
 		throw new Error('Generated project is missing orchestrator-owned dev-server scripts.');
+	}
+	const phaseCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-phase.mjs')], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	if (phaseCheck.status !== 0) throw new Error('Generated phase boundary template did not validate.');
+	const prematureAdaptation = spawnSync(process.execPath, [path.join(root, 'scripts', 'phase-state.mjs'), 'begin', 'adaptation'], {
+		cwd: staticProject,
+		encoding: 'utf8',
+	});
+	if (prematureAdaptation.status === 0 || !prematureAdaptation.stderr.includes('locked')) {
+		throw new Error('Adaptation was not blocked before clone approval.');
 	}
 	const templateReferenceCheck = spawnSync(process.execPath, [path.join(root, 'scripts', 'validate-reference.mjs')], {
 		cwd: staticProject,

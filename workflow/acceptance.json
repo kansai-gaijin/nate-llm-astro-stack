@@ -1,19 +1,26 @@
 {
   "hardGates": [
-    "Every route in content/overview.md is implemented",
-    "Reference forensics and paired state coverage are locked before implementation",
+    "The literal clone and content adaptation run as separate invocations with separate approval state",
+    "The clone uses visible reference copy and downloaded reference media, never supplied Markdown or final brand assets",
+    "The clone is approved explicitly before any sitemap route or approved content is adapted",
+    "Every route in content/overview.md is implemented during adaptation",
+    "Reference forensics and paired state coverage are locked before clone implementation",
     "Only the primary and explicitly listed referencePages are cloned; unlisted reference pages are not crawled",
-    "Approved page text is preserved without invented factual claims",
+    "Approved page text is preserved during adaptation without invented factual claims",
     "Astro check and production build pass",
     "No uncaught browser or console errors",
     "No serious or critical accessibility violations",
     "No horizontal overflow at configured viewports",
     "Screenshots, videos, traces, and source dumps are stored only under ignored artifacts/ folders",
+    "Canonical settled and section captures are nonblank and were captured after a scroll sweep triggered reveal and lazy-load behavior",
+    "Every inventoried reference section has paired 1920px and 390px viewport evidence",
     "Primary desktop geometry matches the reference at 1920px, with 1440px as a secondary desktop check",
     "Desktop and mobile navigation match the reference structure, geometry, open/closed states, and motion",
     "Required hover, focus, loading, scrolling, and navigation states work",
     "Every visible transition and animation is fluid, interruption-safe, and has reduced-motion behavior",
-    "Every reference media requirement has an integrated generated or royalty-free replacement with provenance"
+    "Every clone media requirement uses a downloaded local reference asset with no hotlinks",
+    "Every shipping media requirement has an integrated generated or royalty-free replacement with provenance",
+    "Temporary clone routes and reference media are absent before shipping"
   ],
   "reviewDimensions": {
     "layoutAndGeometry": 15,
@@ -43,6 +50,8 @@
   },
   "iterationPolicy": {
     "iterationsBeforeFeedback": 3,
-    "stopOnlyOnExplicitUserApproval": true
+    "stopOnlyOnExplicitUserApproval": true,
+    "separateCloneAndAdaptationCounters": true,
+    "adaptationRequiresExplicitCloneApproval": true
   }
 }

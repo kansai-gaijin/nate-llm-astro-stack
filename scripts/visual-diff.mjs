@@ -3,9 +3,9 @@ import path from 'node:path';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 
-const referenceRoot = path.resolve(process.env.REFERENCE_CAPTURE_DIR ?? 'artifacts/reference');
-const implementationRoot = path.resolve(process.env.IMPLEMENTATION_CAPTURE_DIR ?? 'artifacts/implementation');
-const diffRoot = path.resolve(process.env.DIFF_CAPTURE_DIR ?? 'artifacts/diff');
+const referenceRoot = path.resolve(process.env.REFERENCE_CAPTURE_DIR ?? 'artifacts/clone/reference');
+const implementationRoot = path.resolve(process.env.IMPLEMENTATION_CAPTURE_DIR ?? 'artifacts/clone/implementation');
+const diffRoot = path.resolve(process.env.DIFF_CAPTURE_DIR ?? 'artifacts/clone/diff');
 const acceptance = JSON.parse(fs.readFileSync(path.resolve('workflow/acceptance.json'), 'utf8'));
 const referenceMetadataPath = path.join(referenceRoot, 'metadata.json');
 const implementationMetadataPath = path.join(implementationRoot, 'metadata.json');

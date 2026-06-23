@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Reference Clone"
+  short_description: "Build a literal reference-site clone first"
+  default_prompt: "Use $astro-reference-clone to build and audit a literal reference clone without using supplied site content."

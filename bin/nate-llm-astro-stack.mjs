@@ -190,7 +190,7 @@ async function main() {
 	}
 
 	console.log(`\nCreated ${generatedPackage.name} in ${target}`);
-	console.log('Next: replace content/overview.md and content/pages/*.md, copy .env.example to .env, then invoke the astro-design-loop skill.');
+	console.log('Next: configure referencePages, then invoke astro-reference-clone. Add/adapt final content only after you approve the clone.');
 	if (!install) console.log('Run npm install and npx playwright install chromium before testing.');
 	if (hosting === 'cloudflare-pages') console.log('See deployment/cloudflare-pages.md for GitHub, Pages, and microCMS webhook setup.');
 }

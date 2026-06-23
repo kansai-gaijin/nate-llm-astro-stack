@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 import matter from 'gray-matter';
+import { PNG } from 'pngjs';
 
 const args = new Map();
 for (let index = 2; index < process.argv.length; index += 2) {
@@ -18,7 +19,7 @@ const planPath = path.resolve(args.get('--plan') ?? 'workflow/reference-plan.jso
 const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
 const overview = matter(fs.readFileSync(path.join(root, 'content', 'overview.md'), 'utf8')).data;
 const implementationBaseUrl = args.get('--base-url') ?? process.env.CAPTURE_BASE_URL ?? 'http://127.0.0.1:4321';
-const outputRoot = path.resolve(args.get('--output') ?? path.join('artifacts', target));
+const outputRoot = path.resolve(args.get('--output') ?? path.join('artifacts', 'clone', target));
 const artifactsRoot = path.resolve('artifacts');
 if (outputRoot !== artifactsRoot && !outputRoot.startsWith(`${artifactsRoot}${path.sep}`)) {
 	throw new Error('Capture output must stay inside the ignored artifacts/ directory.');
@@ -65,7 +66,10 @@ async function runAction(page, action) {
 			await page.locator(selector).press(action.key);
 			break;
 		case 'scroll':
-			if (selector) await page.locator(selector).scrollIntoViewIfNeeded();
+			if (selector) {
+				await page.locator(selector).evaluate((element) => element.scrollIntoView({ behavior: 'instant', block: 'center' }));
+				await page.waitForTimeout(action.settleMs ?? 1000);
+			}
 			else await page.evaluate((y) => window.scrollTo(0, y), action.y ?? 0);
 			break;
 		case 'wait':
@@ -86,7 +90,21 @@ async function runAction(page, action) {
 	}
 }
 
-async function waitForReadiness(page, state) {
+async function scrollSweep(page) {
+	const dimensions = await page.evaluate(() => ({
+		height: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
+		viewport: window.innerHeight,
+	}));
+	const step = Math.max(300, Math.floor(dimensions.viewport * 0.72));
+	for (let y = 0; y < dimensions.height; y += step) {
+		await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), y);
+		await page.waitForTimeout(140);
+	}
+	await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+	await page.waitForTimeout(400);
+}
+
+async function waitForReadiness(page, state, { includeMedia = true } = {}) {
 	const readiness = state.readiness;
 	if (!readiness) return;
 	const selector = readiness[`${target}Selector`] ?? readiness.selector;
@@ -96,7 +114,15 @@ async function waitForReadiness(page, state) {
 			timeout: readiness.timeoutMs ?? 15_000,
 		});
 	}
-	if (readiness.media === true) {
+	const hiddenSelector = readiness[`${target}HiddenSelector`] ?? readiness.hiddenSelector;
+	if (hiddenSelector) {
+		await page.locator(hiddenSelector).waitFor({ state: 'hidden', timeout: readiness.timeoutMs ?? 15_000 });
+	}
+	const settledSelector = readiness[`${target}SettledSelector`] ?? readiness.settledSelector;
+	if (settledSelector) {
+		await page.locator(settledSelector).waitFor({ state: 'visible', timeout: readiness.timeoutMs ?? 15_000 });
+	}
+	if (includeMedia && readiness.media === true) {
 		await page.waitForFunction(() => {
 			const imagesReady = [...document.images].every((image) => image.complete);
 			const videosReady = [...document.querySelectorAll('video')].every((video) =>
@@ -105,6 +131,22 @@ async function waitForReadiness(page, state) {
 			return imagesReady && videosReady;
 		}, undefined, { timeout: readiness.timeoutMs ?? 15_000 });
 	}
+}
+
+function screenshotStats(file) {
+	const image = PNG.sync.read(fs.readFileSync(file));
+	const bins = new Map();
+	let sampled = 0;
+	for (let y = 0; y < image.height; y += 4) {
+		for (let x = 0; x < image.width; x += 4) {
+			const offset = (image.width * y + x) * 4;
+			const key = `${image.data[offset] >> 4},${image.data[offset + 1] >> 4},${image.data[offset + 2] >> 4}`;
+			bins.set(key, (bins.get(key) ?? 0) + 1);
+			sampled += 1;
+		}
+	}
+	const dominant = Math.max(0, ...bins.values()) / Math.max(1, sampled);
+	return { dominantColorRatio: Number(dominant.toFixed(6)), sampledPixels: sampled };
 }
 
 async function measurementsFor(page, state) {
@@ -157,8 +199,14 @@ try {
 					waitUntil: state.waitUntil ?? 'networkidle',
 					timeout: plan.navigationTimeoutMs ?? 45_000,
 				});
-				await waitForReadiness(page, state);
+				// Loaders and page-ready selectors must settle before scrolling. Lazy media cannot be
+				// awaited yet because the scroll sweep is what requests it.
+				await waitForReadiness(page, state, { includeMedia: false });
+				if ((['settled', 'section'].includes(state.kind) || state.fullPage) && state.skipScrollSweep !== true) {
+					await scrollSweep(page);
+				}
 				for (const action of state.actions ?? []) await runAction(page, action);
+				await waitForReadiness(page, state, { includeMedia: true });
 				if (state.delayMs) await page.waitForTimeout(state.delayMs);
 
 				const pageDirectory = path.join(outputRoot, viewport.name, pagePlan.id);
@@ -171,6 +219,10 @@ try {
 					animations: state.animations ?? 'allow',
 					caret: 'hide',
 				});
+				const imageStats = screenshotStats(screenshotPath);
+				if (['settled', 'section'].includes(state.kind) && imageStats.dominantColorRatio > 0.985) {
+					throw new Error(`Capture is effectively blank (${imageStats.dominantColorRatio} dominant color): ${screenshotPath}`);
+				}
 
 				const pageMetadata = await page.evaluate(() => ({
 					title: document.title,
@@ -185,6 +237,7 @@ try {
 					kind: state.kind,
 					url: page.url(),
 					measurements: await measurementsFor(page, state),
+					imageStats,
 					...pageMetadata,
 				});
 			}

@@ -12,6 +12,10 @@
     "requiresVisualMedia": null,
     "evidence": null
   },
+  "loading": {
+    "exists": null,
+    "referenceHiddenSelector": null
+  },
   "mediaRequirements": [],
   "navigation": {
     "desktop": {},

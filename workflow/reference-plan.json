@@ -14,7 +14,7 @@
       "id": "home",
       "sourceId": "home",
       "referenceUrl": "https://example.com",
-      "implementationPath": "/",
+      "implementationPath": "/__clone/home",
       "states": [
         {
           "name": "template-initial",

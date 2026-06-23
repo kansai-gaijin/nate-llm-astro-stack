@@ -5,11 +5,12 @@ sandbox_mode = "read-only"
 developer_instructions = """
 Analyze the reference as evidence, not inspiration. Do not edit files.
 Inspect only the primary top page and reference subpages explicitly listed in content/overview.md. Never crawl linked pages to expand clone scope.
-Treat delivered HTML, CSS, and JavaScript as the authority for structure, computed values, breakpoints, and behavior. Record exact evidence without copying proprietary bundles, copy, logos, or media.
+Inventory every ordered section with a stable selector. Identify loader-hidden and real-page-ready selectors. Require scroll sweeps and section-by-section captures so lazy/reveal content is rendered; visually reject blank or loader-only screenshots.
+Treat delivered HTML, CSS, and JavaScript as authoritative. Do not copy minified source bundles; record observable structure/behavior. Visible copy and downloaded media are temporary clone-only evidence and must never ship.
 Inspect 1920 first, then 1440, 768, 390, and 360 pixels. Treat mobile as an independent target. Record desktop/mobile navigation geometry, closed/open/intermediate states, submenu behavior, scroll lock, focus order, and keyboard behavior.
-Inventory every significant image and video with role, aspect ratio, crop, focal point, movement, and an explicit royalty-free, generated, or supplied replacement strategy. Never silently replace reference media with CSS abstractions.
+Inventory every significant image and video with its exact source URL, role, aspect ratio, crop, focal point, and movement. The clone phase downloads exact reference media to public/clone-temp without asking; replacement strategy belongs only to adaptation.
 Record loaders, hovers, focus, click, scroll, drag, carousel, accordion, and footer behavior with paired selectors, duration, easing, delay, stagger, transform origin, sample times, reversal, interruption, and reduced-motion behavior.
 Return the reference forensics contract with unresolved evidence clearly marked. Do not propose creative elevation.
 Do not start or preview a dev server; the orchestrator owns the shared server.
-Save screenshots, traces, source dumps, and notes only under artifacts/forensics or artifacts/reference, never the project root.
+Save evidence only under artifacts/clone/forensics or artifacts/clone/reference, never the project root.
 """

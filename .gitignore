@@ -32,4 +32,5 @@ test-results/
 playwright-report/
 
 # generated loop state
-workflow/loop-state.json
+workflow/clone-protected-baseline.json
+workflow/approved-clone-baseline.json

@@ -61,12 +61,33 @@ if (!placeholderReference) {
 		if (!planned) errors.push(`Missing capture plan for reference page: ${referencePage.id}`);
 		else {
 			if (planned.referenceUrl !== referencePage.url) errors.push(`Capture URL mismatch for reference page: ${referencePage.id}`);
-			if (planned.implementationPath !== referencePage.targetRoute) errors.push(`Implementation route mismatch for reference page: ${referencePage.id}`);
+			if (planned.implementationPath !== `/__clone/${referencePage.id}`) {
+				errors.push(`Clone route must be isolated at /__clone/${referencePage.id}.`);
+			}
 		}
 		if (!inspectedSources.has(referencePage.id)) errors.push(`Missing reference forensics for reference page: ${referencePage.id}`);
 	}
 	for (const page of plan.pages ?? []) {
 		if (!allowedSources.has(page.sourceId)) errors.push(`Capture plan includes an unrequested reference page: ${page.sourceId}`);
+	}
+	for (const referencePage of reference.pages ?? []) {
+		if (!Array.isArray(referencePage.sections) || referencePage.sections.length === 0) {
+			errors.push(`Reference page ${referencePage.sourceId} requires a section inventory.`);
+			continue;
+		}
+		const planned = plannedSources.get(referencePage.sourceId);
+		for (const section of referencePage.sections) {
+			if (!section.id || !section.referenceSelector) {
+				errors.push(`Reference page ${referencePage.sourceId} has an invalid section inventory entry.`);
+				continue;
+			}
+			const captures = (planned?.states ?? []).filter((state) => state.kind === 'section' && state.sectionId === section.id);
+			for (const viewport of ['desktop-1920', 'mobile-390']) {
+				if (!captures.some((state) => state.viewports?.includes(viewport))) {
+					errors.push(`Section ${referencePage.sourceId}/${section.id} is not captured at ${viewport}.`);
+				}
+			}
+		}
 	}
 
 	const primaryReference = referencePages.find((page) => page.primary === true);
@@ -98,8 +119,8 @@ if (!placeholderReference) {
 	const motionStates = new Map();
 	for (const page of plan.pages ?? []) {
 		for (const state of page.states ?? []) {
-			if (state.implementationOnly && !state.approvedException) {
-				errors.push(`${page.id}/${state.name} cannot be implementationOnly without an approved exception.`);
+			if (state.implementationOnly) {
+				errors.push(`${page.id}/${state.name} cannot be implementationOnly in the literal clone loop.`);
 			}
 			if (!state.viewports?.length) errors.push(`${page.id}/${state.name} must declare viewports.`);
 			if (!state.readiness) errors.push(`${page.id}/${state.name} must declare readiness conditions.`);
@@ -108,6 +129,13 @@ if (!placeholderReference) {
 					if (!action.referenceSelector || !action.implementationSelector) {
 						errors.push(`${page.id}/${state.name} action ${action.type} requires paired selectors.`);
 					}
+				}
+			}
+			if (state.kind === 'section') {
+				if (!state.sectionId) errors.push(`${page.id}/${state.name} requires sectionId.`);
+				if (state.fullPage === true) errors.push(`${page.id}/${state.name} section captures must be viewport-sized, not fullPage.`);
+				if (!(state.actions ?? []).some((action) => action.type === 'scroll' && action.referenceSelector && action.implementationSelector)) {
+					errors.push(`${page.id}/${state.name} requires a paired scroll action.`);
 				}
 			}
 			for (const measurement of state.measurements ?? []) {
@@ -125,6 +153,15 @@ if (!placeholderReference) {
 				if (!motionStates.has(state.motionId)) motionStates.set(state.motionId, []);
 				motionStates.get(state.motionId).push(state);
 				if (Number.isFinite(state.sampleMs)) capturedMotionSamples.get(state.motionId).add(state.sampleMs);
+			}
+		}
+	}
+	if (reference.loading?.exists === true) {
+		for (const page of plan.pages ?? []) {
+			for (const state of (page.states ?? []).filter((candidate) => ['settled', 'section'].includes(candidate.kind))) {
+				if (!state.readiness?.referenceHiddenSelector || !state.readiness?.implementationHiddenSelector) {
+					errors.push(`${page.id}/${state.name} must wait for both reference and clone loaders to be hidden.`);
+				}
 			}
 		}
 	}
