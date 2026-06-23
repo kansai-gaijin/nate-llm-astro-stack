@@ -9,6 +9,10 @@ Establish a faithful baseline before creatively elevating it. Preserve approved 
 recognition while improving hierarchy, rhythm, storytelling, interaction, and finish through user
 feedback. "Award-worthy" means coherent art direction and craft, not maximum effects.
 
+Claude Opus 4.8 has a persistent cream/serif/terracotta default. Never let that default replace
+reference or brand evidence. Give concrete colors, typography, radii, spacing, composition, media
+treatment, and motion direction. In literal clone mode, creative defaults are prohibited entirely.
+
 ## Direct the visual system
 
 - Identify the reference's composition rules, tension, whitespace, scale contrast, grid, cropping,
@@ -36,9 +40,13 @@ Anything that moves must move fluidly. Abrupt or ugly transitions are defects.
 
 - Use CSS/Alpine for simple hover, focus, reveal, accordion, and menu transitions.
 - Add GSAP when the design needs timelines, interruption-safe choreography, complex scroll-linked
-  sequences, SVG work, or coordinated state transitions. Scope animations and clean them up.
+  sequences, SVG work, or coordinated state transitions. Dynamically import it, register plugins
+  once, scope with `gsap.context()`/`gsap.matchMedia()`, use overwrite-safe reversible timelines,
+  refresh ScrollTrigger after media/fonts/layout settle, and revert all contexts on teardown.
 - Add Three.js only when 3D materially supports the story or identity. Lazy-load it, cap device pixel
-  ratio, pause offscreen, provide static/mobile/reduced-motion fallbacks, and destroy resources.
+  ratio, use glTF/GLB with Draco/KTX2 when size justifies it, use instancing/LOD for repeated or
+  distant objects, pause offscreen, provide static/mobile/reduced-motion fallbacks, and dispose
+  geometry, materials, textures, controls, renderers, observers, and WebGL contexts.
 - Reject an effect when it harms clarity, input response, accessibility, or performance.
 
 ## Direct Japanese typography

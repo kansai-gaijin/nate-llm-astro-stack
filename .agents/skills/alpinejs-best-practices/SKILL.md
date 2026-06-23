@@ -11,6 +11,10 @@ Render useful semantic HTML first, then enhance it with the smallest local Alpin
 
 - Scope `x-data` to the owning component. Extract a named Alpine data factory only when behavior is
   reused or state is complex.
+- Use `x-show` for reversible visibility that should remain mounted and `x-if` only when DOM
+  creation/destruction is required. Use stable keys for `x-for`.
+- Prefer Alpine event modifiers (`.outside`, `.escape`, `.prevent`, `.stop`, `.debounce`) and
+  `$dispatch` over custom global plumbing. Use `Alpine.store()` only for genuinely shared UI state.
 - Keep content and business data on the server. Use Alpine for presentation state, not as an app-wide
   data layer.
 - Use `$refs`, `$id`, `$nextTick`, and event modifiers instead of brittle global selectors.
@@ -26,6 +30,8 @@ Render useful semantic HTML first, then enhance it with the smallest local Alpin
   transitions.
 - Prevent race conditions during fast repeated input. Confirm interrupted and reversed transitions
   remain continuous.
+- Match the reference interaction model exactly. Do not convert scroll-driven behavior to clicks,
+  hover behavior to toggles, or timed behavior to an IntersectionObserver approximation.
 - Respect `prefers-reduced-motion`; reduce distance and duration rather than hiding required feedback.
 
 ## Keep it safe and maintainable

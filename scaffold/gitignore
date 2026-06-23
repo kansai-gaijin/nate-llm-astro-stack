@@ -18,6 +18,7 @@ test-results/
 playwright-report/
 workflow/clone-protected-baseline.json
 workflow/approved-clone-baseline.json
+workflow/update-baseline.json
 
 # logs and operating-system files
 npm-debug.log*

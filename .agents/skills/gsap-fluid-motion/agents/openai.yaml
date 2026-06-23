@@ -1,0 +1,4 @@
+interface:
+  display_name: "GSAP Fluid Motion"
+  short_description: "Build and audit fluid GSAP motion in Astro"
+  default_prompt: "Use $gsap-fluid-motion to implement the evidenced complex animation with scoped timelines, interruption safety, responsive and reduced-motion behavior, and complete cleanup."

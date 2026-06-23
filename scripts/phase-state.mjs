@@ -73,6 +73,16 @@ function latestReceipt(phase, iteration) {
 		if (receipt.hardGatesPassed === true && !actuallyPassed) {
 			throw new Error('Clone audit receipt claims success while objective gates are failing.');
 		}
+	} else if (phase === 'adaptation') {
+		for (const field of ['contentCoverage', 'routesCoverage', 'referenceMaterialRemaining', 'brandSystemRecorded', 'phaseBoundaryPassed']) {
+			if (receipt[field] === undefined) throw new Error(`Adaptation audit receipt requires ${field}.`);
+		}
+		const actuallyPassed = receipt.contentCoverage === 1 && receipt.routesCoverage === 1 &&
+			receipt.referenceMaterialRemaining === 0 && receipt.brandSystemRecorded === true &&
+			receipt.phaseBoundaryPassed === true && receipt.p0.length === 0 && receipt.p1.length === 0;
+		if (receipt.hardGatesPassed === true && !actuallyPassed) {
+			throw new Error('Adaptation audit receipt claims success while objective gates are failing.');
+		}
 	}
 	return receipt;
 }

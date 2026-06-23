@@ -8,6 +8,7 @@ const overview = matter(fs.readFileSync(path.join(root, 'content', 'overview.md'
 const plan = readJson('workflow/reference-plan.json');
 const reference = readJson('workflow/reference-manifest.json');
 const motion = readJson('workflow/motion-manifest.json');
+const referenceCopy = readJson('workflow/reference-copy.json');
 const errors = [];
 const referencePages = overview.referencePages ?? [{
 	id: 'home',
@@ -30,13 +31,13 @@ for (const [name, valid] of Object.entries(requiredViewports)) {
 }
 
 const placeholderReference = overview.referenceUrl === 'https://example.com';
-const statuses = [plan.status, reference.status, motion.status];
+const statuses = [plan.status, reference.status, motion.status, referenceCopy.status];
 if (placeholderReference) {
 	if (statuses.some((status) => status !== 'template')) {
 		errors.push('Placeholder content requires template status in all reference workflow files.');
 	}
 } else if (statuses.some((status) => status !== 'locked')) {
-	errors.push('Set reference-plan, reference-manifest, and motion-manifest to locked after reference forensics.');
+	errors.push('Set reference-plan, reference-manifest, reference-copy, and motion-manifest to locked after reference forensics.');
 }
 
 if (!placeholderReference) {
@@ -51,6 +52,17 @@ if (!placeholderReference) {
 	}
 	if (!reference.mediaDecision?.evidence) {
 		errors.push('Record whether the reference requires image/video replacements and the supporting evidence.');
+	}
+	if (!(referenceCopy.entries?.length) && !referenceCopy.noTextReason) {
+		errors.push('Record visible reference copy or an explicit noTextReason.');
+	}
+	for (const entry of referenceCopy.entries ?? []) {
+		if (!entry.sourceId || !entry.text || entry.text.trim().length < 2) errors.push('Reference copy entries require sourceId and text.');
+	}
+	for (const requirement of (reference.mediaRequirements ?? []).filter((item) => item.required !== false)) {
+		if (!requirement.id || !requirement.sourceId || !requirement.sourceUrl || !requirement.usedBy?.length) {
+			errors.push('Every required reference media item needs id, sourceId, sourceUrl, and usedBy before cloning.');
+		}
 	}
 
 	const plannedSources = new Map((plan.pages ?? []).map((page) => [page.sourceId, page]));
@@ -77,9 +89,23 @@ if (!placeholderReference) {
 		}
 		const planned = plannedSources.get(referencePage.sourceId);
 		for (const section of referencePage.sections) {
-			if (!section.id || !section.referenceSelector) {
+			if (!section.id || !section.referenceSelector || !section.specPath || !section.interactionModel) {
 				errors.push(`Reference page ${referencePage.sourceId} has an invalid section inventory entry.`);
 				continue;
+			}
+			if (!['static', 'scroll-driven', 'click-driven', 'time-driven', 'pointer-driven', 'mixed'].includes(section.interactionModel)) {
+				errors.push(`Section ${referencePage.sourceId}/${section.id} has an invalid interactionModel.`);
+			}
+			const specPath = path.resolve(root, section.specPath);
+			const artifactRoot = path.resolve(root, 'artifacts', 'clone', 'forensics', 'specs');
+			if (!specPath.startsWith(`${artifactRoot}${path.sep}`) || !fs.existsSync(specPath)) {
+				errors.push(`Section ${referencePage.sourceId}/${section.id} is missing its forensic spec under artifacts/clone/forensics/specs/.`);
+			} else {
+				const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
+				for (const field of ['targetFile', 'domTopology', 'computedStyles', 'responsive', 'states', 'assets']) {
+					if (spec[field] === undefined) errors.push(`Section spec ${section.specPath} requires ${field}.`);
+				}
+				if (spec.unresolvedEvidence?.length) errors.push(`Section spec ${section.specPath} still has unresolved evidence.`);
 			}
 			const captures = (planned?.states ?? []).filter((state) => state.kind === 'section' && state.sectionId === section.id);
 			for (const viewport of ['desktop-1920', 'mobile-390']) {
@@ -93,8 +119,17 @@ if (!placeholderReference) {
 	const primaryReference = referencePages.find((page) => page.primary === true);
 	const home = plan.pages?.find((page) => page.sourceId === primaryReference?.id);
 	const homeKinds = new Set((home?.states ?? []).map((state) => state.kind));
-	for (const kind of ['settled', 'navigation-hover', 'mobile-navigation-closed', 'mobile-navigation-open']) {
+	for (const kind of [
+		'settled', 'navigation-hover', 'mobile-navigation-closed', 'mobile-navigation-opening',
+		'mobile-navigation-open', 'mobile-navigation-closing', 'mobile-navigation-focus',
+		'mobile-navigation-scroll-lock',
+	]) {
 		if (!homeKinds.has(kind)) errors.push(`Homepage capture plan requires state kind: ${kind}`);
+	}
+	if (typeof reference.navigation?.mobile?.hasSubmenu !== 'boolean') {
+		errors.push('reference-manifest.navigation.mobile.hasSubmenu must explicitly record submenu presence.');
+	} else if (reference.navigation.mobile.hasSubmenu && !homeKinds.has('mobile-navigation-submenu')) {
+		errors.push('Homepage capture plan requires mobile-navigation-submenu when the reference has one.');
 	}
 	const statesForKind = (kind) => (home?.states ?? []).filter((state) => state.kind === kind);
 	for (const viewport of ['desktop-1920', 'desktop-1440']) {
@@ -111,6 +146,14 @@ if (!placeholderReference) {
 				errors.push(`${kind} must be captured at ${viewport}.`);
 			}
 		}
+	}
+	for (const kind of ['mobile-navigation-opening', 'mobile-navigation-closing', 'mobile-navigation-focus', 'mobile-navigation-scroll-lock']) {
+		if (!statesForKind(kind).some((state) => state.viewports?.includes('mobile-390'))) {
+			errors.push(`${kind} must be captured at mobile-390.`);
+		}
+	}
+	if (reference.navigation?.mobile?.hasSubmenu && !statesForKind('mobile-navigation-submenu').some((state) => state.viewports?.includes('mobile-390'))) {
+		errors.push('mobile-navigation-submenu must be captured at mobile-390.');
 	}
 
 	const motionIds = new Set((motion.interactions ?? []).map((interaction) => interaction.id));
@@ -143,7 +186,7 @@ if (!placeholderReference) {
 					errors.push(`${page.id}/${state.name} measurements require id and paired selectors.`);
 				}
 			}
-			if (['settled', 'mobile-navigation-closed', 'mobile-navigation-open'].includes(state.kind) &&
+			if (['settled', 'mobile-navigation-closed', 'mobile-navigation-opening', 'mobile-navigation-open', 'mobile-navigation-closing'].includes(state.kind) &&
 				(state.measurements?.length ?? 0) < 2) {
 				errors.push(`${page.id}/${state.name} requires at least two geometry measurements.`);
 			}

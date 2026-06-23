@@ -34,3 +34,4 @@ playwright-report/
 # generated loop state
 workflow/clone-protected-baseline.json
 workflow/approved-clone-baseline.json
+workflow/update-baseline.json

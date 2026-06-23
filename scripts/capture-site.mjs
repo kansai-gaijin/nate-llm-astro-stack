@@ -35,7 +35,8 @@ async function isReachable(url) {
 }
 
 async function requireImplementationServer() {
-	if (target !== 'implementation' || (await isReachable(implementationBaseUrl))) return;
+	const statusUrl = new URL('/_astro/status', implementationBaseUrl).toString();
+	if (target !== 'implementation' || (await isReachable(statusUrl))) return;
 	throw new Error(`No orchestrator-managed server at ${implementationBaseUrl}. Run npm run loop:serve:start once for the batch.`);
 }
 

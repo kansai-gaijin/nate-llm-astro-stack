@@ -1,4 +1,4 @@
 interface:
   display_name: "Astro Reference Clone"
-  short_description: "Build a literal reference-site clone first"
-  default_prompt: "Use $astro-reference-clone to build and audit a literal reference clone without using supplied site content."
+  short_description: "Forensically build a literal isolated clone"
+  default_prompt: "Use $astro-reference-clone to orchestrate parallel forensics, mandatory section specs, automated reference-asset downloads, isolated section builds, and three-iteration visual and behavior audits without reading supplied site content."

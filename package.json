@@ -2,7 +2,7 @@
   "name": "nate-llm-astro-stack",
   "type": "module",
   "version": "0.1.0",
-  "description": "Interactive Astro design-loop starter for Codex and Claude Code.",
+  "description": "Astro 7 three-loop website cloning, brand adaptation, and maintenance starter for Claude and Codex.",
   "license": "MIT",
   "bin": {
     "nate-llm-astro-stack": "./bin/nate-llm-astro-stack.mjs"
@@ -24,6 +24,7 @@
     "tests",
     "workflow",
     ".env.example",
+    ".nvmrc",
     "AGENTS.md",
     "CLAUDE.md",
     "astro.config.mjs",
@@ -36,7 +37,7 @@
     "provenance": true
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.12.0 <23"
   },
   "scripts": {
     "dev": "astro dev",
@@ -44,36 +45,44 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "astro7:validate": "node scripts/validate-astro7.mjs",
     "content:validate": "node scripts/validate-content.mjs",
+    "content:coverage:validate": "node scripts/validate-content-coverage.mjs",
     "reference:validate": "node scripts/validate-reference.mjs",
     "artifacts:validate": "node scripts/validate-artifacts.mjs",
     "phase:validate": "node scripts/validate-phase.mjs",
     "clone:assets:validate": "node scripts/validate-clone-assets.mjs",
+    "clone:assets:download": "node scripts/download-reference-assets.mjs",
     "shipping:validate": "node scripts/validate-shipping.mjs",
     "phase:status": "node scripts/phase-state.mjs status",
     "clone:begin": "node scripts/phase-state.mjs begin clone",
     "clone:complete": "node scripts/phase-state.mjs complete clone",
     "adaptation:begin": "node scripts/phase-state.mjs begin adaptation",
     "adaptation:complete": "node scripts/phase-state.mjs complete adaptation",
+    "update:status": "node scripts/update-state.mjs status",
+    "update:begin": "node scripts/update-state.mjs begin",
+    "update:complete": "node scripts/update-state.mjs complete",
     "media:validate": "node scripts/validate-media.mjs",
     "dynamic:validate": "node scripts/validate-dynamic-content.mjs",
     "microcms:check": "node scripts/microcms-check.mjs",
     "qa:capture:reference": "node scripts/capture-site.mjs --target reference",
+    "qa:extract:reference": "node scripts/extract-reference-specs.mjs",
     "qa:capture:implementation": "node scripts/capture-site.mjs --target implementation",
     "qa:diff": "node scripts/visual-diff.mjs",
     "test:e2e": "npm run build && playwright test",
-    "test": "npm run content:validate && npm run reference:validate && npm run phase:validate && npm run artifacts:validate && npm run media:validate && npm run dynamic:validate && npm run check && npm run test:e2e",
-    "loop:serve:start": "node scripts/dev-server.mjs start",
-    "loop:serve:status": "node scripts/dev-server.mjs status",
-    "loop:serve:stop": "node scripts/dev-server.mjs stop",
-    "deploy:cloudflare": "npm run build && wrangler pages deploy dist",
+    "test": "npm run astro7:validate && npm run content:validate && npm run content:coverage:validate && npm run reference:validate && npm run phase:validate && npm run artifacts:validate && npm run media:validate && npm run dynamic:validate && npm run check && npm run test:e2e",
+    "loop:serve:start": "node scripts/astro-agent-server.mjs start",
+    "loop:serve:status": "astro dev status --json",
+    "loop:serve:logs": "astro dev logs --json",
+    "loop:serve:stop": "astro dev stop --json",
+    "deploy:cloudflare": "npm run shipping:validate && npm run build && wrangler pages deploy dist",
     "create:test": "node scripts/test-create.mjs",
     "prepack": "npm run check && npm run create:test"
   },
   "dependencies": {
-    "@astrojs/alpinejs": "^0.5.0",
+    "@astrojs/alpinejs": "^1.0.0",
     "@iconify-json/mdi": "^1.2.3",
-    "astro": "^6.4.7",
+    "astro": "^7.0.0",
     "astro-icon": "^1.1.5",
     "budoux": "^0.8.4",
     "microcms-js-sdk": "^3.4.0"
@@ -89,7 +98,7 @@
     "pngjs": "^7.0.0",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
-    "vite": "^7.3.5",
+    "vite": "^8.1.0",
     "wrangler": "^4.103.0"
   }
 }

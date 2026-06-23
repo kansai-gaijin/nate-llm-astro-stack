@@ -1,9 +1,13 @@
 # nate-llm-astro-stack
 
-An interactive, publishable Astro starter that turns approved Markdown content and a reference URL
-into a complete website through a designer → builder → independent-auditor loop. It establishes
-reference fidelity first, then iterates toward a distinctive, award-worthy result. Codex and Claude
-Code are both configured.
+An interactive, publishable Astro 7 starter that turns approved Markdown content, a brand brief,
+and selected reference URLs into a complete website through three isolated loops: literal clone,
+content-and-design adaptation, and post-approval updates. Codex and Claude Code are configured, with
+prompts tuned explicitly for Claude Opus 4.8.
+
+Use Node 22.22 (`nvm use` reads the included `.nvmrc`). Astro 7.0/Vite 8 currently completes and
+then crashes on Windows Node 24 during process teardown, so this starter intentionally pins the
+stable Node 22 line until that upstream issue is resolved.
 
 ## Create a project
 
@@ -42,7 +46,7 @@ The top page (`/`) is mandatory. Inner pages are generated only when listed in t
 Dynamic content uses one typed API and can switch between microCMS and
 `content/dynamic/<endpoint>/*.md` without page/component changes.
 
-## Run the two loops
+## Run the three loops
 
 First, run the literal clone loop. It does not use your supplied page content.
 
@@ -63,20 +67,22 @@ After you explicitly approve the clone, start a new invocation.
 Codex:
 
 ```text
-Use $astro-content-adaptation to adapt the approved Markdown into the approved clone.
+Use $astro-content-design-loop to adapt every approved Markdown block and the brand into the approved clone.
 ```
 
 Claude Code:
 
 ```text
-/astro-content-adaptation
+/astro-content-design-loop
 ```
 
-The adaptation command is blocked until clone approval. Both loops pause after every three
-iterations and use separate state/audit artifacts.
+The adaptation command is blocked until clone approval. Both design loops pause after every three
+iterations and use separate state/audit artifacts. After the adapted site is approved and clone
+material is removed, use `$astro-update-loop` or `/astro-update-loop` for later requested changes.
 
-Agents include read-only reference forensics, a clone builder, a post-clone Astro content adapter,
-visual and behavior auditors, and a fixture copywriter. Only one writer runs at a time.
+Agents include parallel read-only reference forensics, a shared-foundation clone builder, isolated
+section builders, a post-clone Astro content adapter, visual/behavior auditors, and a fixture
+copywriter. Section builders receive complete computed-style specs before writing anything.
 
 The clone loop first locks paired desktop/mobile evidence, downloads the reference site's visible
 images and video into an isolated temporary clone directory, and reconstructs the shell and motion
@@ -91,10 +97,12 @@ The orchestrator owns one managed Astro dev server for each three-iteration batc
 ```text
 npm run loop:serve:start
 npm run loop:serve:status
+npm run loop:serve:logs
 npm run loop:serve:stop
 ```
 
-Subagents use that server and do not open their own dev/preview terminals.
+These commands use Astro 7's native lock-protected background server and JSON logs. Subagents use
+that server and do not open their own dev/preview terminals.
 All screenshots, videos, traces, source dumps, and comparison evidence go under the Git-ignored
 `artifacts/` directory; `npm run artifacts:validate` rejects capture files in the project root.
 
@@ -110,7 +118,8 @@ All screenshots, videos, traces, source dumps, and comparison evidence go under 
 
 ## Included foundation
 
-- Astro 6, Alpine.js, strict TypeScript, and Tailwind CSS 4
+- Astro 7 with Vite 8/Rolldown, Rust compiler/Markdown pipeline, native agent background server,
+  health endpoint, and structured logs
 - reusable `Head`, `BaseLayout`, `Button`, `Container`, and `Section` components
 - shared motion duration/easing tokens and reduced-motion behavior
 - Google Fonts, conditional Google Tag Manager, Iconify, SEO/social metadata
@@ -128,7 +137,11 @@ npx playwright install chromium
 npm run dev
 npm test
 npm run microcms:check
+npm run astro7:validate
+npm run content:coverage:validate
 npm run qa:capture:reference
+npm run qa:extract:reference
+npm run clone:assets:download
 npm run qa:capture:implementation
 npm run qa:diff
 npm run create:test

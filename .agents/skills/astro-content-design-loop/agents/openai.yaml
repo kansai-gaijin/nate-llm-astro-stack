@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Content and Design Loop"
+  short_description: "Fit all approved content and brand into clone"
+  default_prompt: "Use $astro-content-design-loop to map every approved Markdown block into the approved clone, replace protected reference material, apply the supplied brand, build all sitemap routes, and audit the final site."

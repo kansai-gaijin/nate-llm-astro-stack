@@ -1,4 +1,4 @@
 interface:
-  display_name: "Astro Design Loop Router"
-  short_description: "Route separate clone and adaptation loops"
-  default_prompt: "Use $astro-design-loop to route this work into a literal reference-clone loop first and a separate content-adaptation loop only after explicit clone approval."
+  display_name: "Astro Three-Loop Router"
+  short_description: "Route clone, design, and update loops"
+  default_prompt: "Use $astro-design-loop to select exactly one phase: literal reference clone, content-and-brand design adaptation after clone approval, or a bounded update after final approval."

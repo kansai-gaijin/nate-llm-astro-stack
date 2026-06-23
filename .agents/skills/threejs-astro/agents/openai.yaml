@@ -1,0 +1,4 @@
+interface:
+  display_name: "Three.js for Astro"
+  short_description: "Build performant framework-free Three.js scenes"
+  default_prompt: "Use $threejs-astro to implement the approved Three.js experience with lazy loading, mobile budgets, fallbacks, and complete resource disposal."

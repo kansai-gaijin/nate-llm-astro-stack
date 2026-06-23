@@ -1,4 +1,0 @@
-interface:
-  display_name: "Astro Content Adaptation"
-  short_description: "Adapt approved content after clone approval"
-  default_prompt: "Use $astro-content-adaptation to adapt supplied content and replacement media into the explicitly approved clone."

@@ -19,7 +19,9 @@
   "mediaRequirements": [],
   "navigation": {
     "desktop": {},
-    "mobile": {}
+    "mobile": {
+      "hasSubmenu": null
+    }
   },
   "pages": []
 }

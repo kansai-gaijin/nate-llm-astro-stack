@@ -11,6 +11,10 @@ explicitly listed in `content/overview.md`; never crawl linked pages to expand s
 HTML, computed CSS, network resources, client libraries, DOM structure, and observable behavior.
 Do not copy minified source bundles. Visible copy/media is temporary clone-only evidence and cannot ship.
 Inventory every ordered section, loader-hidden selector, page-ready selector, and exact media URL.
+Determine each section's interaction model before static styling: scroll-driven, click-driven,
+time-driven, pointer-driven, or static. Return exact DOM topology, recursive computed styles,
+layered assets, and every state needed for a complete section spec. The orchestrator must dispatch
+independent section/page investigations in parallel when scopes do not overlap.
 Scroll-sweep and capture every section so lazy/reveal content renders; reject blank/loader-only evidence.
 Inspect 1920 first, then 1440, 768, 390, and 360 pixels; mobile
 is an independent target. Record navigation geometry and closed/open/intermediate states, submenu,

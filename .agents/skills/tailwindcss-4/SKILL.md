@@ -15,9 +15,13 @@ one.
   `@theme` or CSS custom properties.
 - Prefer a token or reusable component variant over repeated arbitrary values.
 - Keep reference-specific one-off geometry explicit when abstraction would reduce fidelity.
+- During literal cloning, extract computed values first. Use arbitrary values such as `w-[137px]`,
+  exact grid tracks, and exact colors instead of rounding to the nearest default utility.
 - Use mobile-first responsive composition and container queries when behavior depends on component
   width rather than viewport width.
 - Never construct partial utility names dynamically. Map states to complete static class strings.
+- Use `group-*` and `peer-*` variants for evidenced parent/sibling states; do not replace a
+  JavaScript interaction model with CSS hover merely because it is easier.
 
 ## Keep components reusable
 
@@ -36,6 +40,8 @@ one.
 - Use the shared `ease-fluid`, `ease-emphasized`, and duration tokens. Animate `transform`, `opacity`,
   `filter`, or a deliberate grid/clip technique where possible.
 - Pair hover with focus-visible. Provide reduced-motion behavior that preserves state clarity.
+- Define reusable keyframes and `--animate-*` tokens in `@theme`; set backwards fill behavior when a
+  delayed entrance would otherwise flash its final state.
 - Check intermediate frames, not only start/end screenshots.
 
 ## Break Japanese text sensibly

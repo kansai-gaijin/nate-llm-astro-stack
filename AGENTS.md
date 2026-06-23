@@ -2,18 +2,21 @@
 
 ## Purpose
 
-Run two separate workflows. First build a literal non-production clone under `/__clone/*` without
+Run three separate workflows. First build a literal non-production clone under `/__clone/*` without
 using supplied site content. Stop after three-iteration batches until the user explicitly approves
-the clone. Only in a later invocation may the adaptation workflow build final sitemap routes from
-approved content. Never combine both phases.
+the clone. In a later invocation, adapt all approved content and brand requirements into final
+sitemap routes and remove reference material. After final approval, use the update loop for bounded
+maintenance requests. Never combine phase authority.
 
 ## Stack invariants
 
-- Use Astro, Alpine.js, strict TypeScript, Tailwind CSS, Google Fonts, and Iconify icons.
+- Use Astro 7, Alpine.js, strict TypeScript, Tailwind CSS 4, Google Fonts, and Iconify icons.
 - Use microCMS only for content explicitly marked dynamic in `content/overview.md`.
 - Do not add React, Vue, Svelte, another CSS framework, or a non-Google webfont.
 - Keep secrets server-side. Only variables prefixed with `PUBLIC_` may reach browser code.
 - Prefer Astro components and static HTML. Use Alpine only for client-side interaction.
+- Use Astro 7's native background dev server, status endpoint, and JSON logs. The orchestrator owns
+  the single server; subagents never start or stop it.
 - Inspect the reference's delivered source and loaded libraries before choosing motion tools. Add
   GSAP, Lenis, or Three.js when evidence justifies them. Load them responsibly and provide mobile,
   static, and reduced-motion fallbacks.
@@ -23,6 +26,8 @@ approved content. Never combine both phases.
 - During cloning, read only `referencePages` frontmatter. Do not read or use overview body copy,
   `content/pages`, wireframes, supporting brand documents, logos, microCMS, or `public/media`.
 - During adaptation, treat `content/overview.md` as the sitemap and scope authority.
+- During adaptation, every meaningful text block in `content/pages/*.md` must be mapped in
+  `workflow/content-map.json` and proven present in the rendered site.
 - Treat `referencePages` in the overview as the complete clone-source allowlist. The primary top
   page is mandatory. Do not crawl or clone unlisted reference subpages.
 - Treat `content/pages/*.md` as approved copy. Reorganize it when required by the design, but do not
@@ -79,13 +84,21 @@ Sites built from this template are primarily Japanese. Treat `ja` as the default
 
 - The main agent is the orchestrator and final decision-maker.
 - `reference-forensics` performs read-only DOM/CSS/source, responsive, navigation, motion, and media analysis.
-- `clone-builder` is the only writer during the reference-clone phase.
+- Before any clone writer runs, every section needs a complete JSON spec under
+  `artifacts/clone/forensics/specs/` with recursive computed styles, responsive geometry, assets,
+  interaction model, every state, and no unresolved evidence.
+- `clone-builder` owns shared clone foundation and assembly. A `clone-section-builder` may write one
+  fully specified section in an isolated worktree with disjoint targets. Never dispatch a builder
+  before its complete forensic spec exists.
 - During adaptation only, `fixture-copywriter` creates synthetic Markdown test content and generated
   imagery for declared dynamic collections. It may edit content/media fixtures but not application code.
 - `astro-builder` becomes the only writer after the clone gate, adapting approved content and fixing
   orchestrator-approved discrepancies. Never run it concurrently with `clone-builder`.
 - `visual-auditor` and `behavior-auditor` are read-only and may run in parallel after a build.
 - Auditors return evidence and prioritized discrepancies; they do not fix their own findings.
+- Explicitly fan out independent read-only page/section forensics. Claude Opus 4.8 tends to spawn
+  fewer subagents and follows scope literally, so name every route, section, breakpoint, state,
+  target file, protected file, and acceptance condition in each delegation.
 - Clone and adaptation have separate iteration counters, audit receipts, artifacts, and approval
   states. Each pauses after exactly three iterations. Adaptation remains locked until the user
   explicitly approves a passing clone.
@@ -95,6 +108,8 @@ Sites built from this template are primarily Japanese. Treat `ja` as the default
   appropriate `clone/` or `adaptation/` phase subfolder and its `reference/`, `implementation/`,
   `diff/`, `forensics/`, or `iterations/` child.
   Never save capture evidence in the project root. `artifacts/` is ignored by Git.
+- After adaptation approval, `astro-update-loop` handles user changes in one to three proportionate
+  audit passes under `artifacts/update/requests/<request-id>/`.
 
 ## Required verification
 
@@ -115,6 +130,7 @@ During adaptation run:
 
 ```text
 npm run content:validate
+npm run content:coverage:validate
 npm run phase:validate
 npm run artifacts:validate
 npm run dynamic:validate

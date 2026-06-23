@@ -1,12 +1,15 @@
 {
   "hardGates": [
-    "The literal clone and content adaptation run as separate invocations with separate approval state",
+    "Clone, content-and-design adaptation, and post-approval updates run as separate loops with explicit authority",
+    "Astro 7, Vite 8, Alpine integration 1, Node 22, and native agent server state/logging are validated",
     "The clone uses visible reference copy and downloaded reference media, never supplied Markdown or final brand assets",
     "The clone is approved explicitly before any sitemap route or approved content is adapted",
     "Every route in content/overview.md is implemented during adaptation",
     "Reference forensics and paired state coverage are locked before clone implementation",
+    "Every clone section has a complete recursive DOM/computed-style/behavior spec with no unresolved evidence before builder dispatch",
     "Only the primary and explicitly listed referencePages are cloned; unlisted reference pages are not crawled",
-    "Approved page text is preserved during adaptation without invented factual claims",
+    "Every approved Markdown text block is mapped and proven rendered during adaptation without invented factual claims",
+    "Final colors, typography, radii, spacing, media treatment, and motion derive from reference plus supplied brand rather than model house style",
     "Astro check and production build pass",
     "No uncaught browser or console errors",
     "No serious or critical accessibility violations",
@@ -52,6 +55,8 @@
     "iterationsBeforeFeedback": 3,
     "stopOnlyOnExplicitUserApproval": true,
     "separateCloneAndAdaptationCounters": true,
-    "adaptationRequiresExplicitCloneApproval": true
+    "adaptationRequiresExplicitCloneApproval": true,
+    "updatesRequireApprovedShippingSite": true,
+    "updatePassesPerRequest": "one-to-three-proportionate"
   }
 }

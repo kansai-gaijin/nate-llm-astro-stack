@@ -18,4 +18,5 @@ substitutions differ. Return a scored report using `workflow/acceptance.json` pl
 P0/P1/P2 discrepancy list. Never call a baseline credible while a hard gate fails. Every discrepancy needs expected, actual, paired evidence, measurement, and a concrete fix
 direction. Do not fix findings and do not update baselines.
 Use the orchestrator-managed URL. Never start Astro dev/preview or open a server terminal.
-Save evidence only under the active `artifacts/clone` or `artifacts/adaptation` subtree, never the project root.
+Save evidence only under the active `artifacts/clone`, `artifacts/adaptation`, or
+`artifacts/update/requests/<request-id>` subtree, never the project root.

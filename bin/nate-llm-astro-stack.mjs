@@ -125,7 +125,7 @@ async function main() {
 	const entries = [
 		'.agents', '.claude', '.codex', '.github', 'content', 'deployment', 'media', 'microcms',
 		'public', 'scripts', 'src', 'tests', 'workflow', '.env.example', 'AGENTS.md', 'CLAUDE.md',
-		'astro.config.mjs', 'playwright.config.ts', 'README.md', 'tsconfig.json', 'LICENSE',
+		'.nvmrc', 'astro.config.mjs', 'playwright.config.ts', 'README.md', 'tsconfig.json', 'LICENSE',
 	];
 	for (const entry of entries) {
 		const source = path.join(packageRoot, entry);
@@ -143,7 +143,7 @@ async function main() {
 		name: packageName(path.basename(target)),
 		version: '0.1.0',
 		private: true,
-		description: 'Reference-driven Astro website generated with Astro Design Loop.',
+		description: 'Astro 7 website generated through separate clone, content-design, and update loops.',
 	};
 	delete generatedPackage.bin;
 	delete generatedPackage.files;
@@ -190,7 +190,7 @@ async function main() {
 	}
 
 	console.log(`\nCreated ${generatedPackage.name} in ${target}`);
-	console.log('Next: configure referencePages, then invoke astro-reference-clone. Add/adapt final content only after you approve the clone.');
+	console.log('Next: configure referencePages and run astro-reference-clone; approve it, run astro-content-design-loop, then use astro-update-loop for later changes.');
 	if (!install) console.log('Run npm install and npx playwright install chromium before testing.');
 	if (hosting === 'cloudflare-pages') console.log('See deployment/cloudflare-pages.md for GitHub, Pages, and microCMS webhook setup.');
 }

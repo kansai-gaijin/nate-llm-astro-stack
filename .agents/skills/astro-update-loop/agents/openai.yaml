@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Update Loop"
+  short_description: "Apply audited post-approval site changes"
+  default_prompt: "Use $astro-update-loop to implement the bounded requested change without regressing content coverage, brand, responsive behavior, accessibility, or fluid motion."
